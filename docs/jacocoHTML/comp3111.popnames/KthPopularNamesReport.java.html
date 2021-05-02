@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>KthPopularNamesReport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PopNames3111</a> &gt; <a href="index.source.html" class="el_package">comp3111.popnames</a> &gt; <span class="el_source">KthPopularNamesReport.java</span></div><h1>KthPopularNamesReport.java</h1><pre class="source lang-java linenums">package comp3111.popnames;
+
+import java.util.List;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.cell.PropertyValueFactory;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+/**
+ * Class {@code KthPopularNamesReport} is the class for Task Two Report.
+ */
+public class KthPopularNamesReport {
+	
+	private List&lt;KthPopularNames&gt; KthPopularNamesList;
+	private String strRankOfNames;
+	private String strGender;
+	private String strStartingYear;
+	private String strEndingYear;
+	private int k;
+	private int startingYear;
+	private int endingYear;
+	private String strStatus;
+	
+	/**
+     * Constructs a new object of KthPopularNames. It stores
+     * relevant statistics, so that the Kth Popular Names
+     * can be reported from a list of KthPopularNames objects 
+     * when generating KthPopularNamesReport.
+     */
+	public static class KthPopularNames 
+	{	
+		private String name;
+		private int frequency;
+		private int occurrence;
+		private String percentage;
+			
+<span class="fc" id="L47">		public KthPopularNames(String name, int frequency, int occurrence, String percentage) {</span>
+<span class="fc" id="L48">			this.name = name;</span>
+<span class="fc" id="L49">			this.frequency = frequency;</span>
+<span class="fc" id="L50">			this.occurrence = occurrence;</span>
+<span class="fc" id="L51">			this.percentage = percentage;</span>
+<span class="fc" id="L52">		}</span>
+		
+		/**
+	     * Returns the data member {@code name}.
+	     * &lt;p&gt;
+	     * @return  name, of String type.
+	     */
+		public String getName() {
+<span class="fc" id="L60">			return name;</span>
+		}
+		
+		/**
+	     * Returns the data member {@code frequency}.
+	     * &lt;p&gt;
+	     * @return  frequency, of int type.
+	     */
+		public int getFrequency() {
+<span class="fc" id="L69">			return frequency;</span>
+		}
+		
+		/**
+	     * Returns the data member {@code occurrence}.
+	     * &lt;p&gt;
+	     * @return  occurrence, of int type.
+	     */
+		public int getOccurrence() {
+<span class="fc" id="L78">			return occurrence;</span>
+		}
+		
+		/**
+	     * Returns the data member {@code percentage}.
+	     * &lt;p&gt;
+	     * @return  percentage, of String type.
+	     */
+		public String getPercentage() {
+<span class="fc" id="L87">			return percentage;</span>
+		}
+	}
+	
+	/**
+     * Constructs a new object of KthPopularNamesReport.
+     */
+<span class="fc" id="L94">	public KthPopularNamesReport(String strRankOfNames, String strGender, String startingYear, String endingYear) {</span>
+<span class="fc" id="L95">		this.strRankOfNames = strRankOfNames;</span>
+<span class="fc" id="L96">		this.strGender = strGender;</span>
+<span class="fc" id="L97">		this.strStartingYear = startingYear;</span>
+<span class="fc" id="L98">		this.strEndingYear = endingYear;</span>
+<span class="fc" id="L99">		KthPopularNamesList = new ArrayList&lt;KthPopularNames&gt;();</span>
+<span class="fc" id="L100">	}</span>
+	
+	/**
+     * Returns a string of execution status. In general, the function 
+     * {@code generateKthPopularNamesList} returns &quot;Success&quot; if the inputs are 
+     * valid, returns the corresponding execution status if the input(s) 
+     * is(are) invalid.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doGenerateReport} in class {@code Controller}.
+     * &lt;p&gt;
+     * @return  the execution status, of String type.
+     */
+	public String generateKthPopularNamesList() {
+<span class="fc" id="L114">		strStatus = checkIsValidInputs();</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">		if (!strStatus.isEmpty())</span>
+		{
+<span class="fc" id="L117">			return strStatus;</span>
+		}
+<span class="fc" id="L119">		k = Integer.parseInt(strRankOfNames);</span>
+<span class="fc" id="L120">		startingYear = Integer.parseInt(strStartingYear);</span>
+<span class="fc" id="L121">		endingYear = Integer.parseInt(strEndingYear);</span>
+<span class="fc" id="L122">		KthPopularNamesList = AnalyzeNames.getKthOccurrence(strGender, k, startingYear, endingYear);</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">		if (!KthPopularNamesList.isEmpty())</span>
+		{
+<span class="fc" id="L125">			strStatus = &quot;Success&quot;;</span>
+<span class="fc" id="L126">			autoSetPercentage();</span>
+<span class="fc" id="L127">			sortKthPopularNamesList();</span>
+		}
+		else
+		{
+<span class="fc" id="L131">			int validK = getValidKRange();</span>
+<span class="fc" id="L132">			strStatus = &quot;Sorry, rank &quot; + k + &quot; is not available for the given gender in &quot; + strStartingYear;</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">			if (strGender == &quot;F&quot;)</span>
+			{
+<span class="fc bfc" id="L135" title="All 2 branches covered.">				if (startingYear == endingYear)</span>
+				{
+<span class="fc" id="L137">					strStatus = String.format(&quot;Sorry, rank %d is not available for female names in %d, please try inputting a value &lt;= %d for Rank Of Names.&quot;, k, startingYear, validK);</span>
+				}
+				else
+				{
+<span class="fc" id="L141">					strStatus = String.format(&quot;Sorry, rank %d is not available for female names from %d to %d, please try inputting a value &lt;= %d for Rank Of Names.&quot;, k, startingYear, endingYear, validK);</span>
+				}
+			}
+			else
+			{
+<span class="nc bnc" id="L146" title="All 2 branches missed.">				if (startingYear == endingYear)</span>
+				{
+<span class="nc" id="L148">					strStatus = String.format(&quot;Sorry, rank %d is not available for male names in %d, please try inputting a value &lt;= %d for Rank Of Names.&quot;, k, startingYear, validK);</span>
+				}
+				else
+				{
+<span class="nc" id="L152">					strStatus = String.format(&quot;Sorry, rank %d is not available for male names from %d to %d, please try inputting a value &lt;= %d for Rank Of Names.&quot;, k, startingYear, endingYear, validK);</span>
+				}
+			}
+		}
+<span class="fc" id="L156">		return strStatus;</span>
+	}
+	
+	/**
+     * Returns the valid rankOfNames range. For some years, the database might not have 1000 names registered, the function 
+     * {@code getValidKRange} returns the corresponding largest valid value for rankOfNames 
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * generateKthPopularNamesList} in class {@code KthPopularNamesReport}.
+     * &lt;p&gt;
+     * @return  the valid rankOfNames range, of int type.
+     */
+	public int getValidKRange() {
+<span class="fc" id="L169">		int tempLargestK = AnalyzeNames.getTotalNamesByGender(startingYear, strGender);</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">		for (int i = startingYear + 1; i &lt;= endingYear; i++)</span>
+		{
+<span class="fc" id="L172">			int k = AnalyzeNames.getTotalNamesByGender(i, strGender);</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">			if (k &gt; tempLargestK)</span>
+			{
+<span class="nc" id="L175">				tempLargestK = k;</span>
+			}
+		}
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">		if (tempLargestK &gt; 1000)</span>
+		{
+<span class="nc" id="L180">			tempLargestK = 1000;</span>
+		}
+<span class="fc" id="L182">		return tempLargestK;</span>
+	}
+	
+	/**
+     * Returns a string of error messages, if any. In general, the function 
+     * {@code getValidKRange} returns an empty string &quot;&quot; if the inputs are 
+     * valid, returns the corresponding alert text if the input(s) 
+     * is(are) invalid.
+     * &lt;p&gt;
+     * Three inputs are checked:
+     * &lt;ul&gt;
+     * &lt;li&gt;{@code startingYear}: whether it is within 1880 to 2019.
+     * &lt;li&gt;{@code endingYear}: whether it is within 1880 to 2019.
+     * &lt;li&gt;{@code rankOfNames}: whether it is within 1 to 1000.
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * generateKthPopularNamesList} in class {@code KthPopularNamesReport}.
+     * &lt;p&gt;
+     * @return  a string of error messages.
+     */
+	public String checkIsValidInputs() {
+<span class="fc" id="L204">		String strErrMsg = &quot;&quot;;</span>
+<span class="fc" id="L205">		int startingYear = 0;</span>
+<span class="fc" id="L206">		int endingYear = 0;</span>
+		int k;
+<span class="fc bfc" id="L208" title="All 2 branches covered.">		if (strStartingYear.isEmpty())</span>
+    	{
+<span class="fc" id="L210">    		strErrMsg += &quot;Starting Year cannot be empty\n&quot;;</span>
+    	}
+    	else
+    	{
+    		// Input Validation: non numeric string
+	    	try {
+<span class="fc" id="L216">	    		startingYear = Integer.parseInt(strStartingYear);</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">	    		if (startingYear &gt; 2019)</span>
+	    		{
+<span class="fc" id="L219">		        	strErrMsg += &quot;Starting Year must be &lt;= 2019\n&quot;;</span>
+	    		}
+<span class="fc bfc" id="L221" title="All 2 branches covered.">	    		else if (startingYear &lt; 1880)</span>
+	    		{
+<span class="fc" id="L223">		        	strErrMsg += &quot;Starting Year must be &gt;= 1880\n&quot;;</span>
+	    		}
+<span class="fc" id="L225">	        } catch (NumberFormatException e) {</span>
+<span class="fc" id="L226">	        	strErrMsg += &quot;Please input a valid integer value for Starting Year\n&quot;;</span>
+<span class="fc" id="L227">	        }</span>
+    	}
+<span class="fc bfc" id="L229" title="All 2 branches covered.">    	if (strEndingYear.isEmpty())</span>
+    	{
+<span class="fc" id="L231">    		strErrMsg += &quot;Ending Year cannot be empty\n&quot;;</span>
+    	}
+    	else
+    	{
+	    	try {
+<span class="fc" id="L236">	    		endingYear = Integer.parseInt(strEndingYear);</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">	    		if (endingYear &gt; 2019)</span>
+	    		{
+<span class="fc" id="L239">		        	strErrMsg += &quot;Ending Year must be &lt;= 2019\n&quot;;</span>
+	    		}
+<span class="fc bfc" id="L241" title="All 2 branches covered.">	    		else if (endingYear &lt; 1880)</span>
+	    		{
+<span class="fc" id="L243">		        	strErrMsg += &quot;Ending Year must be &gt;= 1880\n&quot;;</span>
+	    		}
+<span class="fc" id="L245">	        } catch (NumberFormatException e) {</span>
+<span class="fc" id="L246">	        	strErrMsg += &quot;Please input a valid integer value for Ending Year\n&quot;;</span>
+<span class="fc" id="L247">	        }</span>
+    	}
+    	// Input Validation: Starting Year &gt; Ending Year
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">    	if (startingYear &gt; endingYear)</span>
+    	{
+<span class="nc" id="L252">        	strErrMsg += &quot;Starting Year must be &lt;= Ending Year\n&quot;;</span>
+    	}
+<span class="fc bfc" id="L254" title="All 2 branches covered.">    	if (strRankOfNames.isEmpty())</span>
+    	{
+<span class="fc" id="L256">    		strErrMsg += &quot;Rank Of Names cannot be empty\n&quot;;</span>
+    	}
+    	else
+    	{
+	    	try {
+<span class="fc" id="L261">	    		k = Integer.parseInt(strRankOfNames);</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">	    		if (k &gt; 1000)</span>
+	    		{
+<span class="fc" id="L264">		        	strErrMsg += &quot;Rank Of Names must be &lt;= 1000\n&quot;;</span>
+	    		}
+<span class="fc bfc" id="L266" title="All 2 branches covered.">	    		else if (k &lt; 1)</span>
+	    		{
+<span class="fc" id="L268">		        	strErrMsg += &quot;Rank Of Names must be &gt;= 1\n&quot;;</span>
+	    		}
+<span class="fc" id="L270">	        } catch (NumberFormatException e) {</span>
+<span class="fc" id="L271">	        	strErrMsg += &quot;Please input a valid integer value for Rank Of Names\n&quot;;</span>
+<span class="fc" id="L272">	        }</span>
+    	}
+<span class="fc" id="L274">		return strErrMsg;</span>
+	}
+	
+	/**
+     * Returns the total occurrence in the KthPopularNamesList.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * autoSetPercentage} in class {@code KthPopularNamesReport}.
+     * &lt;p&gt;
+     * @return  the total occurrence in the KthPopularNamesList, of int type.
+     */
+	public int getTotalOccurrence()
+	{
+<span class="fc" id="L287">		int totalOccurrence = 0;</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">		for (int i = 0; i &lt; KthPopularNamesList.size(); i++)</span>
+		{
+<span class="fc" id="L290">			totalOccurrence += KthPopularNamesList.get(i).occurrence;</span>
+		}
+<span class="fc" id="L292">		return totalOccurrence;</span>
+	}
+	
+	/**
+     * Automatically calculate the percentage value of each element in KthPopularNamesList.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * generateKthPopularNamesList} in class {@code KthPopularNamesReport}.
+     * &lt;p&gt;
+     */
+	public void autoSetPercentage() 
+	{
+<span class="fc" id="L304">		int totalOccurrence = getTotalOccurrence();</span>
+<span class="fc bfc" id="L305" title="All 2 branches covered.">		for (int i = 0; i &lt; KthPopularNamesList.size(); i++)</span>
+		{
+<span class="fc" id="L307">			KthPopularNames currentName = KthPopularNamesList.get(i);</span>
+<span class="fc" id="L308">			float percentage = currentName.occurrence / (float)totalOccurrence * 100.0f;</span>
+<span class="fc" id="L309">    		KthPopularNamesList.set(i, new KthPopularNames(currentName.name, currentName.frequency, currentName.occurrence, String.format(&quot;%.2f&quot;, percentage)));</span>
+		}
+<span class="fc" id="L311">	}</span>
+	
+	/**
+     * Automatically sort the KthPopularNamesList in descending order of the occurrence of each element.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * generateKthPopularNamesList} in class {@code KthPopularNamesReport}.
+     * &lt;p&gt;
+     */
+	public void sortKthPopularNamesList() 
+	{
+<span class="fc" id="L322">		Collections.sort(KthPopularNamesList, </span>
+<span class="fc" id="L323">			    Comparator.comparingInt(KthPopularNames::getOccurrence).reversed());</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">		for (int j = 0; j &lt; KthPopularNamesList.size(); j++)</span>
+		{
+<span class="fc" id="L326">			KthPopularNames tempName = KthPopularNamesList.get(j);</span>
+<span class="fc bfc" id="L327" title="All 2 branches covered.">			for (int i = 0; i &lt; KthPopularNamesList.size(); i++)</span>
+			{
+<span class="fc" id="L329">		    	KthPopularNames currentName = KthPopularNamesList.get(i);</span>
+<span class="pc bpc" id="L330" title="1 of 4 branches missed.">		    	if (currentName.occurrence == tempName.occurrence &amp;&amp; currentName.name != tempName.name)</span>
+				{
+<span class="nc" id="L332">		    		KthPopularNamesList.set(j, currentName);</span>
+<span class="nc" id="L333">		    		KthPopularNamesList.set(i, tempName);</span>
+				}
+			}
+		}
+<span class="fc" id="L337">	}</span>
+	
+//	public int getMostFrequentIndex()
+//	{
+//		int tempFrequency = 1;
+//		int index = -1;
+//		for (int i = 0; i &lt; KthPopularNamesList.size(); i++)
+//		{
+//			if (tempFrequency &lt; KthPopularNamesList.get(i).frequency)
+//			{
+//				tempFrequency = KthPopularNamesList.get(i).frequency;
+//				index = i;
+//			}
+//		}
+//		return index;
+//	}
+	
+	/**
+     * Returns the element index having the most number of occurrence
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * getSummary} in class {@code KthPopularNamesReport}.
+     * &lt;p&gt;
+     * @return the element index having the most number of occurrence, of int type. 
+     */
+	public int getMostOccurringIndex()
+	{
+<span class="fc" id="L364">		int tempOccurrence = 0;</span>
+<span class="fc" id="L365">		int index = -1;</span>
+<span class="fc bfc" id="L366" title="All 2 branches covered.">		for (int i = 0; i &lt; KthPopularNamesList.size(); i++)</span>
+		{
+<span class="fc" id="L368">        	KthPopularNames currentName = KthPopularNamesList.get(i);</span>
+<span class="pc bpc" id="L369" title="1 of 2 branches missed.">			if (tempOccurrence &lt; currentName.occurrence)</span>
+			{
+<span class="fc" id="L371">				tempOccurrence = currentName.occurrence;</span>
+<span class="fc" id="L372">				index = i;</span>
+			}
+		}
+<span class="fc" id="L375">		return index;</span>
+	}
+	
+	/**
+     * Returns a string of summary report.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doGenerateReport} in class {@code Controller}.
+     * &lt;p&gt;
+     * @return the summary of results, of String type. 
+     */
+	public String getSummary() {
+<span class="fc bfc" id="L387" title="All 2 branches covered.">		if (strStatus != &quot;Success&quot;)</span>
+		{
+<span class="fc" id="L389">			return strStatus;</span>
+		}
+<span class="fc" id="L391">		KthPopularNames kThPopularName = KthPopularNamesList.get(getMostOccurringIndex());</span>
+		String strSummary;
+<span class="pc bpc" id="L393" title="1 of 4 branches missed.">    	if (k != 11 &amp;&amp; k % 10 == 1)</span>
+    	{
+<span class="fc" id="L395">    		strRankOfNames += &quot;-st&quot;;</span>
+    	}
+<span class="pc bpc" id="L397" title="1 of 4 branches missed.">    	else if (k != 12 &amp;&amp; k % 10 == 2)</span>
+    	{
+<span class="fc" id="L399">    		strRankOfNames += &quot;-nd&quot;;</span>
+    	}
+<span class="pc bpc" id="L401" title="1 of 4 branches missed.">    	else if (k != 13 &amp;&amp; k % 10 == 3)</span>
+    	{
+<span class="fc" id="L403">    		strRankOfNames += &quot;-rd&quot;;</span>
+    	}
+    	else
+    	{
+<span class="fc" id="L407">    		strRankOfNames += &quot;-th&quot;;</span>
+    	}
+<span class="fc bfc" id="L409" title="All 2 branches covered.">		if (strGender == &quot;F&quot;)</span>
+		{
+<span class="fc bfc" id="L411" title="All 2 branches covered.">			if (startingYear == endingYear)</span>
+			{
+<span class="fc" id="L413">				strSummary = String.format(&quot;%s popular female names in %d:%n%s has hold the %s rank most often for a total of %d times among names registered for baby girls born in %d. The total number of occurrences of %s is %d, which represents %s%% of total female births at the %s rank in %d.&quot;, strRankOfNames, startingYear, kThPopularName.name, strRankOfNames, kThPopularName.frequency, endingYear, kThPopularName.name, kThPopularName.occurrence, kThPopularName.percentage, strRankOfNames, endingYear);</span>
+			}
+			else
+			{
+<span class="fc" id="L417">				strSummary = String.format(&quot;%s popular female names from %d to %d:%n%s has hold the %s rank most often for a total of %d times among names registered for baby girls born in the period from %d to %d. The total number of occurrences of %s is %d, which represents %s%% of total female births at the %s rank in the period from %d to %d.&quot;, strRankOfNames, startingYear, endingYear, kThPopularName.name, strRankOfNames, kThPopularName.frequency, startingYear, endingYear, kThPopularName.name, kThPopularName.occurrence, kThPopularName.percentage, strRankOfNames, startingYear, endingYear);</span>
+			}
+		}
+		else
+		{
+<span class="fc bfc" id="L422" title="All 2 branches covered.">			if (startingYear == endingYear)</span>
+			{
+<span class="fc" id="L424">				strSummary = String.format(&quot;%s popular male names in %d:%n%s has hold the %s rank most often for a total of %d times among names registered for baby boys born in %d. The total number of occurrences of %s is %d, which represents %s%% of total male births at the %s rank in %d.&quot;, strRankOfNames, startingYear, kThPopularName.name, strRankOfNames, kThPopularName.frequency, endingYear, kThPopularName.name, kThPopularName.occurrence, kThPopularName.percentage, strRankOfNames, endingYear);</span>
+			}
+			else
+			{
+<span class="fc" id="L428">				strSummary = String.format(&quot;%s popular male names from %d to %d:%n%s has hold the %s rank most often for a total of %d times among names registered for baby boys born in the period from %d to %d. The total number of occurrences of %s is %d, which represents %s%% of total male births at the %s rank in the period from %d to %d.&quot;, strRankOfNames, startingYear, endingYear, kThPopularName.name, strRankOfNames, kThPopularName.frequency, startingYear, endingYear, kThPopularName.name, kThPopularName.occurrence, kThPopularName.percentage, strRankOfNames, startingYear, endingYear);</span>
+			}
+		}
+<span class="fc" id="L431">		return strSummary;</span>
+	}
+	
+	/**
+     * Returns a bar chart of the relevant results.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doGenerateReport} in class {@code Controller}.
+     * &lt;p&gt;
+     * @return relevant results, of BarChart type. 
+     */
+	public BarChart getBarChart() {
+<span class="fc bfc" id="L443" title="All 2 branches covered.">		if (strStatus != &quot;Success&quot;)</span>
+		{
+<span class="fc" id="L445">			return null;</span>
+		}
+<span class="fc" id="L447">		final CategoryAxis xAxis = new CategoryAxis();</span>
+<span class="fc" id="L448">        final NumberAxis yAxis = new NumberAxis();</span>
+<span class="fc" id="L449">        final BarChart&lt;String,Number&gt; bc = </span>
+            new BarChart&lt;String,Number&gt;(xAxis,yAxis);
+<span class="fc" id="L451">        xAxis.setLabel(&quot;Names&quot;);       </span>
+<span class="fc" id="L452">        yAxis.setLabel(&quot;Occurrence&quot;);</span>
+<span class="fc" id="L453">        XYChart.Series seriesOccurrence = new XYChart.Series();</span>
+<span class="fc" id="L454">        seriesOccurrence.setName(&quot;Occurrence&quot;);</span>
+<span class="fc bfc" id="L455" title="All 2 branches covered.">        for (int i = 0; i &lt; KthPopularNamesList.size(); i++)</span>
+        {
+<span class="fc" id="L457">        	KthPopularNames currentName = KthPopularNamesList.get(i);</span>
+<span class="fc" id="L458">            seriesOccurrence.getData().add(new XYChart.Data(currentName.name, currentName.occurrence));</span>
+        }             
+<span class="fc" id="L460">        bc.getData().addAll(seriesOccurrence);</span>
+<span class="fc" id="L461">        bc.setId(&quot;tab2BarChart&quot;);</span>
+<span class="fc" id="L462">        bc.setPrefHeight(300);</span>
+<span class="fc" id="L463">        return bc;</span>
+	}
+	
+	/**
+     * Returns a table of the relevant results.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doGenerateReport} in class {@code Controller}.
+     * &lt;p&gt;
+     * @return relevant results, of TableView type. 
+     */
+	public TableView getTable()
+	{
+<span class="fc bfc" id="L476" title="All 2 branches covered.">		if (strStatus != &quot;Success&quot;)</span>
+		{
+<span class="fc" id="L478">			return null;</span>
+		}
+<span class="fc" id="L480">	    ObservableList&lt;KthPopularNames&gt; data = FXCollections.observableList(KthPopularNamesList);</span>
+<span class="fc" id="L481">        TableView table = new TableView();</span>
+<span class="fc" id="L482">        table.setEditable(false);</span>
+        
+<span class="fc" id="L484">        TableColumn nameCol = new TableColumn(&quot;Name&quot;);</span>
+<span class="fc" id="L485">        nameCol.setCellValueFactory(</span>
+                new PropertyValueFactory&lt;&gt;(&quot;name&quot;));
+<span class="fc" id="L487">        TableColumn frequencyCol = new TableColumn(&quot;Frequency&quot;);</span>
+<span class="fc" id="L488">        frequencyCol.setCellValueFactory(</span>
+                new PropertyValueFactory&lt;&gt;(&quot;frequency&quot;));
+<span class="fc" id="L490">        TableColumn occurrencesCol = new TableColumn(&quot;Occurrences&quot;);</span>
+<span class="fc" id="L491">        occurrencesCol.setCellValueFactory(</span>
+                new PropertyValueFactory&lt;&gt;(&quot;occurrence&quot;));
+<span class="fc" id="L493">        TableColumn percentageCol = new TableColumn(&quot;Percentage (%)&quot;);</span>
+<span class="fc" id="L494">        percentageCol.setCellValueFactory(</span>
+                new PropertyValueFactory&lt;&gt;(&quot;percentage&quot;));
+        
+<span class="fc" id="L497">        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);</span>
+<span class="fc" id="L498">        table.setItems(data);</span>
+<span class="fc" id="L499">        table.getColumns().addAll(nameCol, frequencyCol, occurrencesCol, percentageCol);</span>
+<span class="fc" id="L500">        table.setFixedCellSize(25);</span>
+<span class="fc" id="L501">        table.prefHeightProperty().bind(Bindings.size(table.getItems()).multiply(table.getFixedCellSize()).add(30));        table.setId(&quot;tab2Table&quot;);</span>
+<span class="fc" id="L502">        return table;</span>
+	}
+	
+	/**
+     * Returns a pie chart of the relevant results.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doGenerateReport} in class {@code Controller}.
+     * &lt;p&gt;
+     * @return relevant results, of PieChart type. 
+     */
+	public PieChart getPieChart()
+	{
+<span class="fc bfc" id="L515" title="All 2 branches covered.">		if (strStatus != &quot;Success&quot;)</span>
+		{
+<span class="fc" id="L517">			return null;</span>
+		}
+<span class="fc" id="L519">		ObservableList&lt;PieChart.Data&gt; data = FXCollections.observableArrayList();</span>
+<span class="fc bfc" id="L520" title="All 2 branches covered.">        for (int i = 0; i &lt; KthPopularNamesList.size(); i++)</span>
+        {
+<span class="fc" id="L522">        	KthPopularNames currentName = KthPopularNamesList.get(i);</span>
+<span class="fc" id="L523">        	data.add(new PieChart.Data(currentName.name, currentName.occurrence));</span>
+        }    
+<span class="fc" id="L525">        final PieChart pc = new PieChart(data);</span>
+<span class="fc" id="L526">        pc.setId(&quot;tab2PieChart&quot;);</span>
+<span class="fc" id="L527">        pc.setPrefHeight(300);</span>
+<span class="fc" id="L528">        return pc;</span>
+	}
+	
+	/**
+     * Accessor of the {@code KthPopularNamesList}.
+     * @return the list of KthPopularNames, of {@code List&lt;KthPopularNames&gt;} type. 
+     */
+	public List&lt;KthPopularNames&gt; getKthPopularNamesList()
+	{
+<span class="fc" id="L537">        return KthPopularNamesList;</span>
+	}
+	
+	/**
+     * Mutator of the KthPopularNamesList.
+     */
+	public void setKthPopularNamesList(List&lt;KthPopularNames&gt; KthPopularNamesList)
+	{
+<span class="nc" id="L545">        this.KthPopularNamesList = KthPopularNamesList;</span>
+<span class="nc" id="L546">	}</span>
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

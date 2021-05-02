@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CompatiblePairNamePredictionService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PopNames3111</a> &gt; <a href="index.source.html" class="el_package">comp3111.popnames</a> &gt; <span class="el_source">CompatiblePairNamePredictionService.java</span></div><h1>CompatiblePairNamePredictionService.java</h1><pre class="source lang-java linenums">package comp3111.popnames;
+
+import java.util.List;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.cell.PropertyValueFactory;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+/**
+ * Class {@code CompatiblePairNamePredictionService} is the class for Task Five Report.
+ */
+public class CompatiblePairNamePredictionService {
+	
+	private KthPopularNamesReport KthPopularNamesReport;
+<span class="fc" id="L24">	private String strUserYOB = &quot;&quot;;</span>
+<span class="fc" id="L25">	private String strMateGender = &quot;&quot;;</span>
+<span class="fc" id="L26">	private String strMatePreference = &quot;&quot;;</span>
+<span class="fc" id="L27">	private String strMateAcceptableYearOfDiff = &quot;&quot;;</span>
+	private int userYOB;
+	private int mateAcceptableYearOfDiff;
+	private int startingYear;
+	private int endingYear;
+<span class="fc" id="L32">	private String strStatus = &quot;Success&quot;;</span>
+<span class="fc" id="L33">	private String strSimpleOutput = &quot;&quot;;</span>
+<span class="fc" id="L34">	private String strAdvancedOutput = &quot;&quot;;</span>
+<span class="fc" id="L35">	private boolean isSimpleInputChecked = false;</span>
+<span class="fc" id="L36">	private boolean isAdvancedInputChecked = false;</span>
+<span class="fc" id="L37">	private boolean isAdvancedInputSet = false;</span>
+	
+	/**
+     * Constructs a new object of CompatiblePairNamePredictionService.
+     */
+<span class="fc" id="L42">	public CompatiblePairNamePredictionService(String strUserYOB, String strMateGender) {</span>
+<span class="fc" id="L43">		this.strUserYOB = strUserYOB;</span>
+<span class="fc" id="L44">		this.strMateGender = strMateGender;</span>
+<span class="fc" id="L45">	}</span>
+	
+	/**
+     * Configure the advanced inputs.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMakePrediction} in class {@code KthPopularNamesReport}.
+     * &lt;p&gt;
+     * @param	strMatePreference			the preference for the the compatible pair mate.
+     * @param	strMateAcceptableYearOfDiff	the acceptable age difference for the compatible pair mate. 
+     */
+	public void setAdvancedInput(String strMatePreference, String strMateAcceptableYearOfDiff) {
+<span class="fc" id="L57">		this.strMatePreference = strMatePreference;</span>
+<span class="fc" id="L58">		this.strMateAcceptableYearOfDiff = strMateAcceptableYearOfDiff;</span>
+<span class="fc" id="L59">		isAdvancedInputSet = true;</span>
+<span class="fc" id="L60">	}</span>
+	
+	/**
+     * Accessor of the {@code strSimpleOutput}.
+     * @return the predicted name using the simple algorithm, of String type. 
+     */
+	public String getSimpleOutput() {
+<span class="nc" id="L67">		return strSimpleOutput;</span>
+	}
+	
+	/**
+     * Accessor of the {@code strAdvancedOutput}.
+     * @return the predicted name using the advanced algorithm, of String type. 
+     */
+	public String getAdvancedOutput() {
+<span class="nc" id="L75">		return strAdvancedOutput;</span>
+	}
+	
+	/**
+     * Returns a string of execution status. In general, the function 
+     * {@code generateSimpleOutput} returns &quot;Success&quot; if the inputs are 
+     * valid, returns the corresponding execution status if the input(s) 
+     * is(are) invalid.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMakePrediction} in class {@code Controller}.
+     * &lt;p&gt;
+     * @return  the execution status, of String type.
+     */
+	public String generateSimpleOutput() {
+<span class="fc bfc" id="L90" title="All 2 branches covered.">		if (!isSimpleInputChecked)</span>
+		{
+<span class="fc" id="L92">			strStatus = &quot;Please call checkIsValidSimpleInputs() first before using generateSimpleOutput()&quot;;</span>
+<span class="fc" id="L93">			return strStatus;</span>
+		}
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		if (strStatus != &quot;Success&quot;)</span>
+		{
+<span class="fc" id="L97">			return strStatus;</span>
+		}
+<span class="fc" id="L99">		strSimpleOutput = AnalyzeNames.getName(userYOB, 1, strMateGender);</span>
+<span class="fc" id="L100">		return &quot;Success&quot;;</span>
+	}
+	
+	/**
+     * Returns a string of execution status. In general, the function 
+     * {@code generateAdvancedOutput} returns &quot;Success&quot; if the inputs are 
+     * valid, returns the corresponding execution status if the input(s) 
+     * is(are) invalid.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMakePrediction} in class {@code Controller}.
+     * &lt;p&gt;
+     * @return  the execution status, of String type.
+     */
+	public String generateAdvancedOutput() {
+<span class="fc bfc" id="L115" title="All 2 branches covered.">		if (strStatus != &quot;Success&quot;)</span>
+		{
+<span class="fc" id="L117">			return strStatus;</span>
+		}
+<span class="fc bfc" id="L119" title="All 2 branches covered.">		if (!isAdvancedInputChecked)</span>
+		{
+<span class="fc" id="L121">			strStatus = &quot;Please call checkIsValidAdvancedInputs() first before using generateAdvancedOutput()&quot;;</span>
+<span class="fc" id="L122">			return strStatus;</span>
+		}
+<span class="fc" id="L124">    	KthPopularNamesReport = new KthPopularNamesReport(&quot;1&quot;, strMateGender, Integer.toString(startingYear), Integer.toString(endingYear));</span>
+<span class="fc" id="L125">    	strStatus = KthPopularNamesReport.generateKthPopularNamesList();</span>
+<span class="fc" id="L126">    	strAdvancedOutput = KthPopularNamesReport.getKthPopularNamesList().get(0).getName();</span>
+<span class="fc" id="L127">    	return &quot;Success&quot;;</span>
+	}
+	
+	/**
+     * Returns a string of execution status. In general, the function 
+     * {@code checkIsValidSimpleInputs} returns &quot;Success&quot; if the inputs are 
+     * valid, returns the corresponding execution status if the input(s) 
+     * is(are) invalid.
+     * &lt;p&gt;
+     * One input is checked:
+     * &lt;ul&gt;
+     * &lt;li&gt;{@code userYOB}: whether it is within 1880 to 2019.
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMakePrediction} in class {@code Controller}.
+     * &lt;p&gt;
+     * @return  the execution status, of String type.
+     */
+	public String checkIsValidSimpleInputs() {
+<span class="fc" id="L147">		strStatus = &quot;Success&quot;;</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">		if (strUserYOB.isEmpty())</span>
+    	{
+<span class="fc" id="L150">    		strStatus = &quot;User's Year Of Birth cannot be empty\n&quot;;</span>
+    	}
+    	else
+    	{
+    		// Input Validation: non numeric string
+	    	try {
+<span class="fc" id="L156">	    		userYOB = Integer.parseInt(strUserYOB);</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">	    		if (userYOB &gt; 2019)</span>
+	    		{
+<span class="fc" id="L159">	    			strStatus = &quot;User's Year Of Birth must be &lt;= 2019\n&quot;;</span>
+	    		}
+<span class="fc bfc" id="L161" title="All 2 branches covered.">	    		else if (userYOB &lt; 1880)</span>
+	    		{
+<span class="fc" id="L163">	    			strStatus = &quot;User's Year Of Birth must be &gt;= 1880\n&quot;;</span>
+	    		}
+<span class="fc" id="L165">	        } catch (NumberFormatException e) {</span>
+<span class="fc" id="L166">	        	strStatus = &quot;Please input a valid integer value for User's Year Of Birth\n&quot;;</span>
+<span class="fc" id="L167">	        }</span>
+    	}
+<span class="fc" id="L169">    	isSimpleInputChecked = true;</span>
+<span class="fc" id="L170">		return strStatus;</span>
+	}
+	
+	/**
+     * Returns a string of execution status. In general, the function 
+     * {@code checkIsValidAdvancedInputs} returns &quot;Success&quot; if the inputs are 
+     * valid, returns the corresponding execution status if the input(s) 
+     * is(are) invalid.
+     * &lt;p&gt;
+     * Two inputs and Three conditions are checked:
+     * &lt;ul&gt;
+     * &lt;li&gt;{@code strMatePreference}: 			whether it is empty.
+     * &lt;li&gt;{@code strMateAcceptableYearOfDiff}: whether it is larger than 0.
+     * &lt;li&gt;{@code conditionOne}: 				whether {@code setAdvancedInput} has been called in advance.
+     * &lt;li&gt;{@code conditionTwo}: 				whether {@code checkIsValidSimpleInputs} has been called in advance.
+     * &lt;li&gt;{@code conditionThree}: 				whether the year of birth range for the compatible pair mate is within 1880 to 2019.
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMakePrediction} in class {@code Controller}.
+     * &lt;p&gt;
+     * @return  the execution status, of String type.
+     */
+	public String checkIsValidAdvancedInputs() {
+<span class="fc bfc" id="L194" title="All 2 branches covered.">		if (!isAdvancedInputSet)</span>
+		{
+<span class="fc" id="L196">			strStatus = &quot;Please call setAdvancedInput() first before using checkIsValidAdvancedInputs()&quot;;</span>
+<span class="fc" id="L197">			return strStatus;</span>
+		}
+<span class="fc bfc" id="L199" title="All 2 branches covered.">		if (!isSimpleInputChecked)</span>
+		{
+<span class="fc" id="L201">			strStatus = &quot;Please call checkIsValidSimpleInputs() first before using checkIsValidAdvancedInputs()&quot;;</span>
+<span class="fc" id="L202">			return strStatus;</span>
+		}
+<span class="fc" id="L204">		String strErrMsg = &quot;&quot;;</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">		if (strMatePreference.isEmpty())</span>
+    	{
+<span class="fc" id="L207">    		strErrMsg += &quot;Mate's Preference cannot be empty\n&quot;;</span>
+    	}
+<span class="fc bfc" id="L209" title="All 2 branches covered.">    	if (strMateAcceptableYearOfDiff.isEmpty())</span>
+    	{
+<span class="fc" id="L211">    		strErrMsg += &quot;Mate's Acceptable Year Of Difference cannot be empty\n&quot;;</span>
+    	}
+    	else
+    	{
+<span class="fc bfc" id="L215" title="All 2 branches covered.">    		if (!strMatePreference.isEmpty())</span>
+    		{
+		    	try {
+<span class="fc" id="L218">		    		mateAcceptableYearOfDiff = Integer.parseInt(strMateAcceptableYearOfDiff);</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">		    		if (mateAcceptableYearOfDiff &lt;= 0)</span>
+		    		{
+<span class="fc" id="L221">		    			strErrMsg += &quot;Mate's Acceptable Year Of Difference must be &gt;= 1\n&quot;;</span>
+		    		}
+<span class="fc" id="L223">		        } catch (NumberFormatException e) {</span>
+<span class="fc" id="L224">		        	strErrMsg += &quot;Please input a valid integer value for Mate's Acceptable Year Of Difference\n&quot;;</span>
+<span class="fc" id="L225">		        }</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">				if (strMatePreference == &quot;Younger&quot;)</span>
+				{
+<span class="fc bfc" id="L228" title="All 2 branches covered.">					if (userYOB + mateAcceptableYearOfDiff &gt; 2019)</span>
+					{
+<span class="fc" id="L230">						strErrMsg += &quot;Sorry! The system cannot predict a compatible pair name younger than you.&quot;;</span>
+					}
+<span class="fc" id="L232">					startingYear = userYOB + 1;</span>
+<span class="fc" id="L233">					endingYear = userYOB + mateAcceptableYearOfDiff;</span>
+				}
+				else    	
+				{
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">					if (userYOB - mateAcceptableYearOfDiff &lt; 1880)</span>
+					{
+<span class="fc" id="L239">						strErrMsg += &quot;Sorry! The system cannot predict a compatible pair name older than you.&quot;;</span>
+					}
+<span class="fc" id="L241">					startingYear = userYOB - mateAcceptableYearOfDiff;</span>
+<span class="fc" id="L242">					endingYear = userYOB - 1;</span>
+				}
+    		}
+    	}
+<span class="fc bfc" id="L246" title="All 2 branches covered.">    	if (!strErrMsg.isEmpty())</span>
+    	{
+<span class="fc bfc" id="L248" title="All 2 branches covered.">	    	if (strStatus != &quot;Success&quot;)</span>
+	    	{
+<span class="fc" id="L250">	    		strStatus += strErrMsg;</span>
+	    	}
+	    	else
+	    	{
+<span class="fc" id="L254">	        	strStatus = strErrMsg;</span>
+	    	}
+    	}
+<span class="fc" id="L257">		isAdvancedInputChecked = true;</span>
+<span class="fc" id="L258">		return strStatus;</span>
+	}
+	
+	/**
+     * Returns a string of prediction message generated using the advanced algorithm.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMakePrediction} in class {@code Controller}.
+     * &lt;p&gt;
+     * @return  the execution status, of String type.
+     */
+	public String getAdvancedPredictionMessage() {
+<span class="fc" id="L270">		return &quot;Prediction results generated using the advanced algorithm.\nThe predicted name for your compatible pair is &quot;</span>
+				+ strAdvancedOutput + &quot;.\nPlease sieze the chance if you know a &quot;
+				+ strAdvancedOutput + &quot; in your life!&quot;;
+	}
+	
+	/**
+     * Returns a string of prediction message generated using the simple algorithm.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMakePrediction} in class {@code Controller}.
+     * &lt;p&gt;
+     * @return  the execution status, of String type.
+     */
+	public String getSimplePredictionMessage() {
+<span class="fc" id="L284">		return &quot;Prediction results generated using the simple algorithm.\nThe predicted name for your compatible pair is &quot;</span>
+				+ strSimpleOutput + &quot;.\nPlease sieze the chance if you know a &quot;
+				+ strSimpleOutput + &quot; in your life!&quot;;
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
