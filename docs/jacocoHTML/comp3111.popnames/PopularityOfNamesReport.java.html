@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PopularityOfNamesReport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PopNames3111</a> &gt; <a href="index.source.html" class="el_package">comp3111.popnames</a> &gt; <span class="el_source">PopularityOfNamesReport.java</span></div><h1>PopularityOfNamesReport.java</h1><pre class="source lang-java linenums">package comp3111.popnames;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+
+/**
+ * Task 3: Class that generates a report in response to the queries on the popularity of a name over a given period.
+ */
+public class PopularityOfNamesReport {
+	/**
+	 * Gender that can be chosen by user in Task 3
+	 */
+<span class="fc" id="L37">	public enum Gender {</span>
+<span class="fc" id="L38">	    MALE, FEMALE</span>
+	}
+	/**
+	 * Name of interest
+	 */
+	private String name;
+	/**
+	 * Gender of interest
+	 */
+	private Gender gender;
+	/**
+	 * Starting Year of interest
+	 */
+	private int startingYear;
+	/**
+	 * Ending Year of interest
+	 */
+	private int endingYear;
+	/**
+	 * Array List holding all the records of that name in the year period of interest
+	 */
+<span class="fc" id="L59">	private ArrayList&lt;PopularityOfNamesRecord&gt; records = new ArrayList&lt;&gt;();</span>
+	/**
+	 * Number of years of occurrence in the year period of interest
+	 */
+<span class="fc" id="L63">	private int numOfYearOfOccurrence = 0;</span>
+	/**
+	 * Number of years that no data of occurrence for the name of interest
+	 */
+<span class="fc" id="L67">	private int missingDataNum = 0;</span>
+	
+	/**
+	 * Class constructor for a PopularityOfNamesReport object
+	 * 
+	 * @param name Name of interest
+	 * @param gender Gender of interest
+	 * @param startingYear Starting year of interest
+	 * @param endingYear Ending year of interest
+	 */
+<span class="fc" id="L77">	public PopularityOfNamesReport(String name, Gender gender, int startingYear, int endingYear) {</span>
+<span class="fc" id="L78">		this.name = name;</span>
+<span class="fc" id="L79">		this.gender = gender;</span>
+<span class="fc" id="L80">		this.startingYear = startingYear;</span>
+<span class="fc" id="L81">		this.endingYear = endingYear;</span>
+<span class="fc" id="L82">		fetchData();</span>
+<span class="fc" id="L83">	}</span>
+	
+	/**
+	 * Check if the parameter name is a valid name
+	 * @param name Name of interest
+	 * @return Short message whether it is a valid name or not
+	 */
+	public static String isValidName(String name) {
+<span class="fc bfc" id="L91" title="All 2 branches covered.">		if (name.trim().isEmpty()) return &quot;Please input a name! \n&quot;;</span>
+<span class="fc bfc" id="L92" title="All 4 branches covered.">		if (name.length() &lt; 2 || name.length() &gt; 15) return &quot;Please input a name that has 2-15 characters! \n&quot;;</span>
+<span class="fc" id="L93">		String regex = &quot;[A-Za-z\\s]+&quot;;      </span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">	    if (!name.matches(regex)) return &quot;Name is invalid. Please input valid English character only! \n&quot;;</span>
+<span class="fc" id="L95">	    else return &quot;SUCCESS&quot;;</span>
+	}
+	
+	/**
+	 * Check if the year period of interest is a valid year period
+	 * @param startYear Starting year of interest
+	 * @param endYear Ending year of interest
+	 * @return Short message whether it is a valid name or not
+	 */
+	public static String isValidYearPeriod(String startYear, String endYear) {
+		// check if variable is null
+<span class="fc bfc" id="L106" title="All 4 branches covered.">		if(!startYear.trim().isEmpty() &amp;&amp; !endYear.trim().isEmpty()) {</span>
+			// check if it is numerical
+<span class="fc bfc" id="L108" title="All 4 branches covered.">			if(startYear.matches(&quot;^\\d+$&quot;) &amp;&amp; endYear.matches(&quot;^\\d+$&quot;)) {</span>
+<span class="fc" id="L109">				int startingYear = Integer.parseInt(startYear);</span>
+<span class="fc" id="L110">				int endingYear = Integer.parseInt(endYear);</span>
+	    		// check if year inputs are outside the range 1880-2019
+<span class="pc bpc" id="L112" title="2 of 8 branches missed.">	    		if (startingYear &lt; 1880 || startingYear &gt; 2019 || endingYear &lt; 1880 || endingYear &gt; 2019) {</span>
+<span class="fc" id="L113">	    			return &quot;The year period should be within 1880-2019!\n&quot;;</span>
+	    		}
+	    		// check if startingYear input is later than endingYear input
+<span class="fc bfc" id="L116" title="All 2 branches covered.">	    		if (startingYear &gt; endingYear) {</span>
+<span class="fc" id="L117">	    			return &quot;The starting year should be earlier than the ending year!\n&quot;;</span>
+	    		}
+<span class="fc" id="L119">	    		return &quot;SUCCESS&quot;;</span>
+			}
+<span class="fc" id="L121">			else return &quot;The starting year and ending year values have to be numerical!\n&quot;;</span>
+		}
+<span class="fc" id="L123">		else return &quot;Please input starting year and ending year!\n&quot;;</span>
+		
+	}
+	
+	/**
+	 * Fetch the data into the ArrayList of data record
+	 */
+	public void fetchData() {
+<span class="fc" id="L131">		int queryPeriodDuration = this.endingYear - this.startingYear + 1;</span>
+		
+<span class="fc bfc" id="L133" title="All 2 branches covered.">		String gender = (this.gender == Gender.MALE? &quot;M&quot; : &quot;F&quot;);</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">		for(int i = 0; i &lt; queryPeriodDuration; i++) {</span>
+<span class="fc" id="L135">			float totalByGender = (float) AnalyzeNames.getTotalBirthByGender(this.startingYear + i, gender);</span>
+<span class="fc" id="L136">			int rank = AnalyzeNames.getRank( this.startingYear + i, this.name, gender);</span>
+<span class="pc bpc" id="L137" title="1 of 4 branches missed.">			if (rank != -1 &amp;&amp; rank &lt;= 1000) {</span>
+<span class="fc" id="L138">				int occurrence = AnalyzeNames.getOccurrence(this.startingYear + i, this.name, gender);</span>
+<span class="fc" id="L139">				float percentageNum = ((float)occurrence / totalByGender);</span>
+<span class="fc" id="L140">				DecimalFormat df = new DecimalFormat(&quot;#.##%&quot;);</span>
+<span class="fc" id="L141">				String percentage = df.format(percentageNum);</span>
+			
+<span class="fc" id="L143">				PopularityOfNamesRecord record = new PopularityOfNamesRecord(this.startingYear + i, rank, occurrence, percentage);</span>
+<span class="fc" id="L144">				this.records.add(record);</span>
+<span class="fc" id="L145">				numOfYearOfOccurrence++;</span>
+<span class="fc" id="L146">			}</span>
+			else {
+<span class="fc" id="L148">				this.missingDataNum++;</span>
+<span class="fc" id="L149">				PopularityOfNamesRecord record = new PopularityOfNamesRecord(this.startingYear + i, -1, 0, &quot;&quot;);</span>
+<span class="fc" id="L150">				this.records.add(record);</span>
+			}
+		}
+<span class="fc" id="L153">	}</span>
+
+	/**
+	 * Generate a short summary describing the popularity of name of interest
+	 * @return Short summary describing the popularity of name of interest
+	 */
+	public String getSummary() {
+		// Find the index of record of most popular 
+<span class="fc" id="L161">		int highestRank = 1001;</span>
+<span class="fc" id="L162">		int highestRankYear = 0;</span>
+<span class="fc" id="L163">		int highestRankOccurrence = 0;</span>
+<span class="fc" id="L164">		int highestOccurrence = 0;</span>
+<span class="fc" id="L165">		int highestOccurrenceYear = 0;</span>
+<span class="fc" id="L166">		String highestPercentage = &quot;&quot;;</span>
+		
+<span class="fc bfc" id="L168" title="All 2 branches covered.">		for (PopularityOfNamesRecord record : this.records) { </span>
+<span class="fc" id="L169">			int occ = record.getOccurrence();</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">			if (occ &gt; highestOccurrence) {</span>
+<span class="fc" id="L171">				highestOccurrence = occ;</span>
+<span class="fc" id="L172">				highestOccurrenceYear = record.getYear();</span>
+			}
+<span class="fc" id="L174">			int rank = Integer.parseInt(record.getRank());</span>
+<span class="fc bfc" id="L175" title="All 4 branches covered.">	        if(rank!= -1 &amp;&amp; rank &lt;= highestRank) {</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">	        	if(rank == highestRank) {</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">	        		if(record.getOccurrence()&gt;highestRankOccurrence) {</span>
+<span class="fc" id="L178">	        			highestRank = rank;</span>
+<span class="fc" id="L179">	    	        	highestRankYear = record.getYear();</span>
+<span class="fc" id="L180">	    	        	highestRankOccurrence = record.getOccurrence();</span>
+<span class="fc" id="L181">	    	        	highestPercentage = record.getPercentage();</span>
+	        		}
+	        		else continue;
+	        	}
+	        	else {
+<span class="fc" id="L186">	        		highestRank = rank;</span>
+<span class="fc" id="L187">		        	highestRankYear = record.getYear();</span>
+<span class="fc" id="L188">		        	highestRankOccurrence = record.getOccurrence();</span>
+<span class="fc" id="L189">		        	highestPercentage = record.getPercentage();</span>
+	        	}
+	        }
+<span class="fc" id="L192">	    }</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">		String gender = (this.gender == Gender.MALE? &quot;male&quot; : &quot;female&quot;);</span>
+<span class="fc" id="L194">		String summary = String.format(&quot;The year when the name %s was most popular is %d at rank %d. In that year, the number of occurrences is %d, which represents %s of total %s births in %d.&quot;</span>
+<span class="fc" id="L195">				, this.name, highestRankYear, highestRank, highestRankOccurrence, highestPercentage, gender, highestRankYear);</span>
+		
+<span class="fc" id="L197">		String extra = String.format(&quot; Apart from highest rank, in %d, there are the greatest number of %s borned, which is %d. It is a wonderful name!&quot;, highestOccurrenceYear, this.name, highestOccurrence);</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">		if (highestRankYear != highestOccurrenceYear) {</span>
+<span class="fc" id="L199">			summary += extra;</span>
+		}
+<span class="fc" id="L201">		return summary;</span>
+	}
+	
+	/**
+	 * Generate a full report showing the popularity of name of interest. A dialog will pop up.
+	 */
+	public void getFullReport() {
+<span class="fc" id="L208">		String header = &quot;Popularity of Name &quot;+ this.name;</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">		String generalDescription = String.format(&quot;Popularity of %s name %s over the period from %d to %d&quot;,(this.gender == Gender.MALE? &quot;male&quot; : &quot;female&quot;),this.name, this.startingYear,this.endingYear);</span>
+		String missingDataDescription;
+<span class="fc bfc" id="L211" title="All 2 branches covered.">		if (this.missingDataNum == 0) {</span>
+<span class="fc" id="L212">			missingDataDescription = &quot;&quot;;</span>
+		}
+		else {
+<span class="fc" id="L215">			missingDataDescription = String.format(&quot;Data are missing for %d years where the name Ronaldo is not in the top 1000 most\n&quot;</span>
+<span class="fc" id="L216">					+ &quot;popular names.&quot;, this.missingDataNum);</span>
+		}
+		
+<span class="fc" id="L219">		VBox vbox = new VBox();</span>
+		
+		// Create the headers
+<span class="fc" id="L222">		Text headerOne = new Text(&quot;A. Summary of Results&quot;);</span>
+<span class="fc" id="L223">		headerOne.setFont(Font.font(null, FontWeight.BOLD, 15));</span>
+<span class="fc" id="L224">		Text headerTwo = new Text(&quot;B. Relevant results presented with a data table&quot;);</span>
+<span class="fc" id="L225">		headerTwo.setFont(Font.font(null, FontWeight.BOLD, 15));</span>
+<span class="fc" id="L226">		Text headerThree = new Text(&quot;C. Relevant results presented with a bar chart&quot;);</span>
+<span class="fc" id="L227">		headerThree.setFont(Font.font(null, FontWeight.BOLD, 15));</span>
+<span class="fc" id="L228">		Text headerFour = new Text(&quot;D. Relevant results presented with a line chart&quot;);</span>
+<span class="fc" id="L229">		headerFour.setFont(Font.font(null, FontWeight.BOLD, 15));</span>
+		
+		// For &quot;A. Summary of Results&quot;
+<span class="fc" id="L232">		Text summary = new Text(getSummary());</span>
+<span class="fc" id="L233">		summary.setWrappingWidth(550);</span>
+<span class="fc" id="L234">		vbox.getChildren().add(headerOne);</span>
+<span class="fc" id="L235">		vbox.getChildren().add(summary);</span>
+<span class="fc" id="L236">		VBox.setMargin(headerOne, new Insets(5, 0, 5, 0));</span>
+		
+<span class="fc" id="L238">		Text remarks = new Text();</span>
+<span class="fc" id="L239">		String remarksDescription = String.format(&quot;Remarks: The year when the name %s was most popular is defined as the year that the name is in highest rank.&quot;</span>
+				+ &quot;If the name is at the highest rank for more than one year, the year when the name was most popular will be the year with higher occurrences among those years at that rank.&quot;, this.name);
+<span class="fc" id="L241">		remarks.setText(remarksDescription);</span>
+<span class="fc" id="L242">		remarks.setFont(Font.font(null, FontPosture.ITALIC, 11));</span>
+<span class="fc" id="L243">		remarks.setWrappingWidth(550);</span>
+<span class="fc" id="L244">		vbox.getChildren().add(remarks);</span>
+<span class="fc" id="L245">		vbox.setMargin(remarks, new Insets(5, 5, 5, 0));</span>
+		
+		// For &quot;B. Relevant results presented with a data table&quot;
+<span class="fc" id="L248">		GridPane bGrid = new GridPane();</span>
+<span class="fc" id="L249">		VBox.setMargin(bGrid, new Insets(0, 0, 0, 5));</span>
+<span class="fc" id="L250">		Circle bPointOne = new Circle();</span>
+<span class="fc" id="L251">		bPointOne.setRadius(4.0f);</span>
+<span class="fc" id="L252">		bGrid.add(bPointOne, 0, 0);</span>
+<span class="fc" id="L253">		GridPane.setHalignment(bPointOne,HPos.CENTER);</span>
+		
+<span class="fc" id="L255">		Text bGeneralDesc = new Text(generalDescription);</span>
+<span class="fc" id="L256">		GridPane.setMargin(bGeneralDesc, new Insets(3, 3, 3, 5));</span>
+<span class="fc" id="L257">		bGrid.add(bGeneralDesc, 1, 0);</span>
+		
+<span class="fc bfc" id="L259" title="All 2 branches covered.">		if(missingDataDescription != &quot;&quot;) {</span>
+<span class="fc" id="L260">			Circle bPointTwo = new Circle();</span>
+<span class="fc" id="L261">			bPointTwo.setRadius(4.0f);</span>
+<span class="fc" id="L262">			GridPane.setHalignment(bPointTwo,HPos.CENTER);</span>
+<span class="fc" id="L263">			bGrid.add(bPointTwo, 0, 1);</span>
+			
+<span class="fc" id="L265">			Text bMissingDataDesc = new Text(missingDataDescription);</span>
+<span class="fc" id="L266">			GridPane.setMargin(bMissingDataDesc, new Insets(3, 3, 3, 5));</span>
+<span class="fc" id="L267">			bGrid.add(bMissingDataDesc, 1, 1);</span>
+		}
+		
+<span class="fc" id="L270">		vbox.getChildren().add(headerTwo);</span>
+<span class="fc" id="L271">		vbox.getChildren().add(bGrid);</span>
+<span class="fc" id="L272">		VBox.setMargin(bGrid, new Insets(0, 0, 0, 5));</span>
+<span class="fc" id="L273">		VBox.setMargin(headerTwo, new Insets(5, 0, 5, 0));</span>
+		
+<span class="fc" id="L275">		vbox.getChildren().add(this.getTable());</span>
+		
+		// For &quot;C. Relevant results presented with a bar chart&quot;
+<span class="fc" id="L278">		GridPane cGrid = new GridPane();</span>
+<span class="fc" id="L279">		Circle cPointOne = new Circle();</span>
+<span class="fc" id="L280">		cPointOne.setRadius(4.0f);</span>
+<span class="fc" id="L281">		cGrid.add(cPointOne, 0, 0);</span>
+		
+<span class="fc" id="L283">		Text cGeneralDesc = new Text(generalDescription);</span>
+<span class="fc" id="L284">		GridPane.setMargin(cGeneralDesc, new Insets(3, 3, 3, 5));</span>
+<span class="fc" id="L285">		cGrid.add(cGeneralDesc, 1, 0);</span>
+		
+<span class="fc" id="L287">		Circle cPointTwo = new Circle();</span>
+<span class="fc" id="L288">		cPointTwo.setRadius(4.0f);</span>
+<span class="fc" id="L289">		GridPane.setHalignment(cPointTwo,HPos.CENTER);</span>
+<span class="fc" id="L290">		cGrid.add(cPointTwo, 0, 1);</span>
+<span class="fc" id="L291">		String barChartDescription = String.format(&quot;Each year is associated with a bar representing the number of occurrences of the&quot;</span>
+				+ &quot; name %s. The longer the bar, the more popular the name.&quot;, this.name);
+<span class="fc" id="L293">		Text cGeneralDescTwo = new Text(barChartDescription);</span>
+<span class="fc" id="L294">		cGeneralDescTwo.setWrappingWidth(500);</span>
+<span class="fc" id="L295">		GridPane.setMargin(cGeneralDescTwo, new Insets(3, 3, 3, 5));</span>
+<span class="fc" id="L296">		cGrid.add(cGeneralDescTwo, 1, 1);</span>
+		
+<span class="fc bfc" id="L298" title="All 2 branches covered.">		if(missingDataDescription != &quot;&quot;) {</span>
+<span class="fc" id="L299">			Circle cPointThree = new Circle();</span>
+<span class="fc" id="L300">			cPointThree.setRadius(4.0f);</span>
+<span class="fc" id="L301">			GridPane.setHalignment(cPointTwo,HPos.CENTER);</span>
+<span class="fc" id="L302">			cGrid.add(cPointThree, 0, 2);</span>
+			
+<span class="fc" id="L304">			Text cMissingDataDesc = new Text(missingDataDescription);</span>
+<span class="fc" id="L305">			cMissingDataDesc.setWrappingWidth(500);</span>
+<span class="fc" id="L306">			GridPane.setMargin(cMissingDataDesc, new Insets(3, 3, 3, 5));</span>
+<span class="fc" id="L307">			cGrid.add(cMissingDataDesc, 1, 2);</span>
+		}
+		
+<span class="fc" id="L310">		vbox.getChildren().add(headerThree);</span>
+<span class="fc" id="L311">		vbox.getChildren().add(cGrid);</span>
+		
+<span class="fc" id="L313">		VBox.setMargin(cGrid, new Insets(0, 0, 0, 5));</span>
+<span class="fc" id="L314">		VBox.setMargin(headerThree, new Insets(5, 0, 5, 0));</span>
+		
+<span class="fc" id="L316">		vbox.getChildren().add(this.getBarChart());</span>
+		
+<span class="fc bfc" id="L318" title="All 2 branches covered.">		if (numOfYearOfOccurrence &gt; 2) {</span>
+<span class="fc" id="L319">			String barChartRemarks = &quot;Remarks: The bar in black represents the year with lowest occurrence, while that in green represents the year with highest occurrence.&quot;;</span>
+<span class="fc" id="L320">			Text cGeneralDescThree = new Text(barChartRemarks);</span>
+<span class="fc" id="L321">			cGeneralDescThree.setFont(Font.font(null, FontPosture.ITALIC, 11));</span>
+<span class="fc" id="L322">			cGeneralDescThree.setWrappingWidth(500);</span>
+<span class="fc" id="L323">			vbox.getChildren().add(cGeneralDescThree);</span>
+<span class="fc" id="L324">			VBox.setMargin(cGeneralDescThree, new Insets(0, 0, 0, 0));</span>
+		}
+		
+		
+		// For &quot;D. Relevant results presented with a line chart&quot;
+<span class="fc" id="L329">		GridPane dGrid = new GridPane();</span>
+<span class="fc" id="L330">		Circle dPointOne = new Circle();</span>
+<span class="fc" id="L331">		dPointOne.setRadius(4.0f);</span>
+<span class="fc" id="L332">		dGrid.add(dPointOne, 0, 0);</span>
+		
+<span class="fc" id="L334">		Text dGeneralDesc = new Text(generalDescription);</span>
+<span class="fc" id="L335">		GridPane.setMargin(dGeneralDesc, new Insets(3, 3, 3, 5));</span>
+<span class="fc" id="L336">		dGrid.add(dGeneralDesc, 1, 0);</span>
+		
+<span class="fc" id="L338">		Circle dPointTwo = new Circle();</span>
+<span class="fc" id="L339">		dPointTwo.setRadius(4.0f);</span>
+<span class="fc" id="L340">		GridPane.setHalignment(dPointTwo,HPos.CENTER);</span>
+<span class="fc" id="L341">		dGrid.add(dPointTwo, 0, 1);</span>
+<span class="fc" id="L342">		String lineChartDescription = String.format(&quot;Each year is associated with a point on the line chart showing the trend of the popularity of the name %s.&quot;, this.name);</span>
+<span class="fc" id="L343">		Text dGeneralDescTwo = new Text(lineChartDescription);</span>
+<span class="fc" id="L344">		dGeneralDescTwo.setWrappingWidth(500);</span>
+<span class="fc" id="L345">		GridPane.setMargin(dGeneralDescTwo, new Insets(3, 3, 3, 5));</span>
+<span class="fc" id="L346">		dGrid.add(dGeneralDescTwo, 1, 1);</span>
+		
+<span class="fc bfc" id="L348" title="All 2 branches covered.">		if(missingDataDescription != &quot;&quot;) {</span>
+<span class="fc" id="L349">			Circle dPointThree = new Circle();</span>
+<span class="fc" id="L350">			dPointThree.setRadius(4.0f);</span>
+<span class="fc" id="L351">			GridPane.setHalignment(dPointThree,HPos.CENTER);</span>
+<span class="fc" id="L352">			dGrid.add(dPointThree, 0, 2);</span>
+			
+<span class="fc" id="L354">			Text dMissingDataDesc = new Text(missingDataDescription);</span>
+<span class="fc" id="L355">			dMissingDataDesc.setWrappingWidth(500);</span>
+<span class="fc" id="L356">			GridPane.setMargin(dMissingDataDesc, new Insets(3, 3, 3, 5));</span>
+<span class="fc" id="L357">			dGrid.add(dMissingDataDesc, 1, 2);</span>
+		}
+		
+<span class="fc" id="L360">		vbox.getChildren().add(headerFour);</span>
+<span class="fc" id="L361">		vbox.getChildren().add(dGrid);</span>
+<span class="fc" id="L362">		VBox.setMargin(dGrid, new Insets(0, 0, 0, 5));</span>
+<span class="fc" id="L363">		VBox.setMargin(headerFour, new Insets(5, 0, 5, 0));</span>
+		
+<span class="fc" id="L365">		vbox.getChildren().add(this.getLineChart());</span>
+<span class="fc bfc" id="L366" title="All 2 branches covered.">		if (numOfYearOfOccurrence &gt; 2) {</span>
+<span class="fc" id="L367">			String lineChartRemarks = &quot;Remarks: The dashed line is the mean of the overall occurrence in years that the name is in top 1000.&quot;;</span>
+<span class="fc" id="L368">			Text dGeneralDescThree = new Text(lineChartRemarks);</span>
+<span class="fc" id="L369">			dGeneralDescThree.setFont(Font.font(null, FontPosture.ITALIC, 11));</span>
+<span class="fc" id="L370">			dGeneralDescThree.setWrappingWidth(500);</span>
+<span class="fc" id="L371">			vbox.getChildren().add(dGeneralDescThree);</span>
+<span class="fc" id="L372">			VBox.setMargin(dGeneralDescThree, new Insets(0, 0, 0, 0));</span>
+		}
+		
+<span class="fc" id="L375">		Alert dialog = new Alert(Alert.AlertType.INFORMATION);</span>
+<span class="fc" id="L376">        dialog.setTitle(&quot;Full report&quot;);</span>
+<span class="fc" id="L377">        dialog.setHeaderText(header);</span>
+<span class="fc" id="L378">		ScrollPane scrollPane = new ScrollPane();</span>
+<span class="fc" id="L379">        scrollPane.setContent(vbox);</span>
+<span class="fc" id="L380">        dialog.getDialogPane().setContent(scrollPane);</span>
+<span class="fc" id="L381">        dialog.showAndWait();</span>
+<span class="fc" id="L382">	}</span>
+
+	/**
+	 * Generate a data table showing the popularity of name in the year period of interest
+	 * @return A TableView object for the popularity of name
+	 */
+	public TableView getTable() {
+<span class="fc" id="L389">		TableView table = new TableView();</span>
+<span class="fc" id="L390">		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);</span>
+<span class="fc" id="L391">		table.setStyle(&quot;-fx-alignment: CENTER;&quot;);</span>
+		
+<span class="fc" id="L393">		TableColumn&lt;PopularityOfNamesRecord, Integer&gt; column1 = new TableColumn&lt;&gt;(&quot;Year&quot;);</span>
+<span class="fc" id="L394">	    column1.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;year&quot;));</span>
+<span class="fc" id="L395">	    column1.setStyle(&quot;-fx-alignment: CENTER;&quot;);</span>
+
+<span class="fc" id="L397">	    TableColumn&lt;PopularityOfNamesRecord, String&gt; column2 = new TableColumn&lt;&gt;(&quot;Rank&quot;);</span>
+<span class="fc" id="L398">	    column2.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;rank&quot;));</span>
+<span class="fc" id="L399">	    column2.setStyle(&quot;-fx-alignment: CENTER;&quot;);</span>
+	    
+<span class="fc" id="L401">	    TableColumn&lt;PopularityOfNamesRecord, String&gt; column3 = new TableColumn&lt;&gt;(&quot;Occurrences&quot;);</span>
+<span class="fc" id="L402">	    column3.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;occurrence&quot;));</span>
+<span class="fc" id="L403">	    column3.setStyle(&quot;-fx-alignment: CENTER;&quot;);</span>
+
+<span class="fc" id="L405">	    TableColumn&lt;PopularityOfNamesRecord, String&gt; column4 = new TableColumn&lt;&gt;(&quot;Percentage&quot;);</span>
+<span class="fc" id="L406">	    column4.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;percentage&quot;));</span>
+<span class="fc" id="L407">	    column4.setStyle(&quot;-fx-alignment: CENTER;&quot;);</span>
+
+<span class="fc" id="L409">	    table.getColumns().add(column1);</span>
+<span class="fc" id="L410">	    table.getColumns().add(column2);</span>
+<span class="fc" id="L411">	    table.getColumns().add(column3);</span>
+<span class="fc" id="L412">	    table.getColumns().add(column4);</span>
+	    
+<span class="fc bfc" id="L414" title="All 2 branches covered.">		for (PopularityOfNamesRecord record : this.records) { </span>
+<span class="fc bfc" id="L415" title="All 2 branches covered.">	        if(Integer.parseInt(record.getRank())!= -1) {</span>
+<span class="fc" id="L416">	        	table.getItems().add(record);</span>
+	        }
+<span class="fc" id="L418">	    }</span>
+
+<span class="fc" id="L420">		return table;</span>
+	}
+	
+	/**
+	 * Generate a bar chart showing the popularity of name in the year period of interest
+	 * @return A BarChart object for the popularity of name
+	 */
+	public BarChart getBarChart() {
+<span class="fc" id="L428">		CategoryAxis xAxis = new CategoryAxis();</span>
+<span class="fc" id="L429">		xAxis.setLabel(&quot;Year&quot;);</span>
+<span class="fc" id="L430">		NumberAxis yAxis = new NumberAxis();</span>
+<span class="fc" id="L431">		yAxis.setLabel(&quot;Occurrences&quot;);</span>
+
+<span class="fc" id="L433">		BarChart barChart = new BarChart(xAxis, yAxis);</span>
+		
+<span class="fc" id="L435">		XYChart.Series dataSeries1 = new XYChart.Series();</span>
+<span class="fc" id="L436">		dataSeries1.setName(this.name);</span>
+		
+<span class="fc bfc" id="L438" title="All 2 branches covered.">		for (PopularityOfNamesRecord record : this.records) { </span>
+<span class="fc bfc" id="L439" title="All 2 branches covered.">	        if(Integer.parseInt(record.getRank())!= -1) {</span>
+<span class="fc" id="L440">	        	dataSeries1.getData().add(new XYChart.Data(Integer.toString(record.getYear()), Integer.valueOf(record.getOccurrence())));</span>
+	        }
+<span class="fc" id="L442">	    }</span>
+<span class="fc" id="L443">		barChart.getData().add(dataSeries1);</span>
+<span class="fc" id="L444">		barChart.setLegendVisible(false);</span>
+		
+		// find highest rank
+<span class="fc" id="L447">		int lowestOccurrence = 10000, lowestOccurrenceIndex = 0, highestOccurrence = 0, highestOccurrenceIndex = 0;</span>
+<span class="fc bfc" id="L448" title="All 2 branches covered.">		for (int i=0; i&lt; this.records.size(); i++ ) { 			</span>
+<span class="fc" id="L449">			int occ = this.records.get(i).getOccurrence();</span>
+<span class="fc bfc" id="L450" title="All 2 branches covered.">			if (occ &gt; highestOccurrence) {</span>
+<span class="fc" id="L451">				highestOccurrence = occ;</span>
+<span class="fc" id="L452">				highestOccurrenceIndex = i;</span>
+			}
+<span class="fc bfc" id="L454" title="All 4 branches covered.">			if (occ &lt; lowestOccurrence &amp;&amp; occ &gt; 0) {</span>
+<span class="fc" id="L455">				lowestOccurrence = occ;</span>
+<span class="fc" id="L456">				lowestOccurrenceIndex = i;</span>
+			}
+	    }
+
+<span class="fc bfc" id="L460" title="All 2 branches covered.">		if (numOfYearOfOccurrence &gt; 2) {</span>
+<span class="fc" id="L461">			String lowOccStyle = &quot;.data&quot;+String.valueOf(lowestOccurrenceIndex)+&quot;.chart-bar&quot;;</span>
+<span class="fc" id="L462">			Node n1 = barChart.lookup(lowOccStyle);</span>
+<span class="fc" id="L463">		    n1.setStyle(&quot;-fx-bar-fill: black&quot;);</span>
+<span class="fc" id="L464">		    String highOccstyle = &quot;.data&quot;+String.valueOf(highestOccurrenceIndex)+&quot;.chart-bar&quot;;</span>
+<span class="fc" id="L465">			Node n2 = barChart.lookup(highOccstyle);</span>
+<span class="fc" id="L466">		    n2.setStyle(&quot;-fx-bar-fill: green&quot;);</span>
+		}
+
+		
+<span class="fc" id="L470">		return barChart;</span>
+	}
+	
+	/**
+	 * Generate a line chart showing the popularity of name in the year period of interest
+	 * @return A LineChart object for the popularity of name
+	 */
+	public LineChart getLineChart() {
+<span class="fc" id="L478">		CategoryAxis xAxis = new CategoryAxis();</span>
+<span class="fc" id="L479">		xAxis.setLabel(&quot;Year&quot;);</span>
+<span class="fc" id="L480">		NumberAxis yAxis = new NumberAxis();</span>
+<span class="fc" id="L481">		yAxis.setLabel(&quot;Occurrences&quot;);</span>
+		
+<span class="fc" id="L483">        final LineChart lineChart = new LineChart(xAxis,yAxis);</span>
+<span class="fc" id="L484">        XYChart.Series dataSeries1 = new XYChart.Series();</span>
+<span class="fc" id="L485">		dataSeries1.setName(this.name);</span>
+<span class="fc" id="L486">		lineChart.getData().add(dataSeries1);</span>
+		
+<span class="fc" id="L488">		int max = 0, min = 1000, sum = 0, totalOfYear = 0;</span>
+<span class="fc bfc" id="L489" title="All 2 branches covered.">		for (PopularityOfNamesRecord record : this.records) { </span>
+<span class="fc bfc" id="L490" title="All 2 branches covered.">	        if(Integer.parseInt(record.getRank())!= -1) {</span>
+<span class="fc" id="L491">	        	dataSeries1.getData().add(new XYChart.Data(Integer.toString(record.getYear()), Integer.valueOf(record.getOccurrence())));</span>
+<span class="fc" id="L492">	        	int occ = Integer.valueOf(record.getOccurrence());</span>
+<span class="fc bfc" id="L493" title="All 2 branches covered.">	        	if (occ &gt; max) max = occ;</span>
+<span class="fc bfc" id="L494" title="All 2 branches covered.">	        	if (occ &lt; min) min = occ;</span>
+<span class="fc" id="L495">	        	sum+=occ;</span>
+<span class="fc" id="L496">	        	totalOfYear++;</span>
+	        }
+<span class="fc" id="L498">	    }</span>
+<span class="fc bfc" id="L499" title="All 2 branches covered.">		if (numOfYearOfOccurrence &gt; 2) {</span>
+<span class="fc" id="L500">			XYChart.Series dataSeries2 = new XYChart.Series();</span>
+<span class="fc" id="L501">			dataSeries2.setName(&quot;mean of occurrences of Veronica&quot;);</span>
+<span class="fc" id="L502">			int mean = sum / totalOfYear;</span>
+<span class="fc bfc" id="L503" title="All 2 branches covered.">			for (PopularityOfNamesRecord record : this.records) { </span>
+<span class="fc" id="L504">				dataSeries2.getData().add(new XYChart.Data(Integer.toString(record.getYear()), mean));</span>
+<span class="fc" id="L505">			}</span>
+<span class="fc" id="L506">			lineChart.getData().add(dataSeries2);</span>
+<span class="fc bfc" id="L507" title="All 2 branches covered.">			for (Object data : dataSeries2.getData()) {</span>
+<span class="pc bpc" id="L508" title="1 of 2 branches missed.">	            if (data != null) {</span>
+	                //only display the last data point, change the style same way as shown with the line
+<span class="fc" id="L510">	                    StackPane stackPane = (StackPane) ((XYChart.Data) data).getNode();</span>
+<span class="fc" id="L511">	                    stackPane.setVisible(false);</span>
+	            }
+<span class="fc" id="L513">	        }</span>
+<span class="fc" id="L514">			Node n1 = lineChart.lookup(&quot;.default-color1.chart-series-line&quot;);</span>
+<span class="fc" id="L515">		    n1.setStyle(&quot;-fx-stroke: black; -fx-stroke-width: 1px; -fx-effect: null; -fx-stroke-dash-array: 10 10 10 10;&quot;);</span>
+		}
+		
+<span class="fc" id="L518">		lineChart.setLegendVisible(false);</span>
+<span class="fc" id="L519">		return lineChart;</span>
+	}
+	
+	
+	/**
+	 *  Inner class for the record of the popularity of name in a year
+	 */
+	public class PopularityOfNamesRecord {
+		/**
+		 * The year of the record of the popularity of name of interest
+		 */
+		private final SimpleIntegerProperty year;
+		/**
+		 * The rank of the name 
+		 */
+		private final SimpleStringProperty rank;
+		/**
+		 * The occurrence of the name
+		 */
+		private final SimpleIntegerProperty occurrence;
+		/**
+		 * The percentage of the occurrence over the total number of people with same gender born in same year
+		 */
+		private final SimpleStringProperty percentage;
+		
+		/**
+		 * Class constructor for a PopularityOfNamesRecord object
+		 * 
+		 * @param year Year of the record
+		 * @param rank Rank of the name in the given year
+		 * @param occurrence Occurrence of the name in the given year
+		 * @param percentage Percentage of the occurrence over the total number of people with same gender born in same year
+		 */
+<span class="fc" id="L552">		public PopularityOfNamesRecord (int year, int rank, int occurrence, String percentage) {</span>
+<span class="fc" id="L553">			this.year = new SimpleIntegerProperty(year);</span>
+<span class="fc" id="L554">			this.rank = new SimpleStringProperty(Integer.toString(rank));</span>
+<span class="fc" id="L555">			this.occurrence = new SimpleIntegerProperty(occurrence);</span>
+<span class="fc" id="L556">			this.percentage = new SimpleStringProperty(percentage);	</span>
+<span class="fc" id="L557">		}</span>
+		
+		/**
+		 * Get the year of the record
+		 * @return The integer format for year in the record
+		 */
+		public int getYear() {
+<span class="fc" id="L564">			return year.get();</span>
+		}
+		
+		/**
+		 * Get the rank of the name in the record
+		 * @return The string format for rank in the record
+		 */
+		public String getRank() {
+<span class="fc" id="L572">			return rank.get();</span>
+		}
+		
+		/**
+		 * Get the occurrence of the name in the record
+		 * @return The integer format for occurrence of name in the record
+		 */
+		public int getOccurrence(){
+<span class="fc" id="L580">			return occurrence.get();</span>
+		}
+		
+		/**
+		 * Get the percentage of the name in the record
+		 * @return The string format for percentage in the record
+		 */
+		public String getPercentage() {
+<span class="fc" id="L588">			return percentage.get();</span>
+		}
+	}
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

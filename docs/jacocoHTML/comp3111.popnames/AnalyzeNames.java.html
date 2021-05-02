@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AnalyzeNames.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PopNames3111</a> &gt; <a href="index.source.html" class="el_package">comp3111.popnames</a> &gt; <span class="el_source">AnalyzeNames.java</span></div><h1>AnalyzeNames.java</h1><pre class="source lang-java linenums">package comp3111.popnames;
+
+import org.apache.commons.csv.*;
+import edu.duke.*;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Contains the helper functions for the entire program.
+ */
+<span class="fc" id="L11">public class AnalyzeNames {</span>
+
+	 /**
+	  * Get the CSV Parser of the year of interest
+	  * @param year The year of interest
+	  * @return fileParser
+	  */
+	public static CSVParser getFileParser(int year) {
+<span class="fc" id="L19">     FileResource fr = new FileResource(String.format(&quot;dataset/yob%s.csv&quot;, year));</span>
+<span class="fc" id="L20">     return fr.getCSVParser(false);</span>
+	}
+ 
+	/**
+	  * Get summary for Task 0 in a particular year
+	  * @param		year	The year of interest
+	  * @return		a string of summary
+	  */
+	public static String getSummary(int year) {
+<span class="nc" id="L29">		String oReport = &quot;&quot;;	</span>
+<span class="nc" id="L30">		int totalBirths = 0;</span>
+<span class="nc" id="L31">		int totalBoys = 0;</span>
+<span class="nc" id="L32">		int totalGirls = 0;</span>
+<span class="nc" id="L33">		int totalNames = 0;</span>
+<span class="nc" id="L34">		int uniqueBoys = 0;</span>
+<span class="nc" id="L35">		int uniqueGirls = 0;</span>
+		
+<span class="nc" id="L37">		oReport = String.format(&quot;Summary (Year of %d):\n&quot;, year);</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">		for (CSVRecord rec : getFileParser(year)) {</span>
+<span class="nc" id="L39">			int numBorn = Integer.parseInt(rec.get(2));</span>
+<span class="nc" id="L40">			totalBirths += numBorn;</span>
+<span class="nc" id="L41">			totalNames += 1;</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">			if (rec.get(1).equals(&quot;M&quot;)) {</span>
+<span class="nc" id="L43">				totalBoys += numBorn;</span>
+<span class="nc" id="L44">				uniqueBoys++;</span>
+			}
+			else {
+<span class="nc" id="L47">				totalGirls += numBorn;</span>
+<span class="nc" id="L48">				uniqueGirls++;</span>
+			}
+<span class="nc" id="L50">		}</span>
+		
+<span class="nc" id="L52">		oReport += String.format(&quot;Total Births = %,d\n&quot;, totalBirths);</span>
+<span class="nc" id="L53">		oReport += String.format(&quot;***Baby Girls = %,d\n&quot;, totalGirls);</span>
+<span class="nc" id="L54">		oReport += String.format(&quot;***Baby Boys = %,d\n&quot;, totalBoys);</span>
+		
+<span class="nc" id="L56">		oReport += String.format(&quot;Total Number of Unique Names = %,d\n&quot;, totalNames);</span>
+<span class="nc" id="L57">		oReport += String.format(&quot;***Unique Names (baby girls) = %,d\n&quot;, uniqueGirls);</span>
+<span class="nc" id="L58">		oReport += String.format(&quot;***Unique Names (baby boys) = %,d\n&quot;, uniqueBoys);</span>
+		
+<span class="nc" id="L60">		return oReport;</span>
+	}
+	
+	 /**
+	  * Get the rank of the name of interest in a particular year
+	  * @param year The year of interest
+	  * @param name The name of interest
+	  * @param gender The gender of interest
+	  * @return Rank
+	  */
+	 public static int getRank(int year, String name, String gender) {
+<span class="fc" id="L71">	     boolean found = false;</span>
+<span class="fc" id="L72">	     int oRank = 0;</span>
+<span class="fc" id="L73">	 	int rank = 1;</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">	     for (CSVRecord rec : getFileParser(year)) {</span>
+	         // Increment rank if gender matches param
+<span class="fc bfc" id="L76" title="All 2 branches covered.">	         if (rec.get(1).equals(gender)) {</span>
+	             // Return rank if name matches param
+<span class="fc bfc" id="L78" title="All 2 branches covered.">	             if (rec.get(0).equals(name)) {</span>
+<span class="fc" id="L79">	             	found = true;</span>
+<span class="fc" id="L80">	             	oRank = rank;</span>
+<span class="fc" id="L81">	             	break;</span>
+	             }
+<span class="fc" id="L83">	             rank++;</span>
+	         }
+<span class="fc" id="L85">	     }</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">	     if (found)</span>
+<span class="fc" id="L87">	     	return oRank;</span>
+	     else
+<span class="fc" id="L89">	     	return -1;</span>
+	 }
+	 
+	 /**
+	  * Get the name by a defined rank in a particular year
+	  * @param year The year of interest
+	  * @param rank The rank of interest
+	  * @param gender The gender of interest
+	  * @return Name
+	  */
+	 public static String getName(int year, int rank, String gender) {
+<span class="fc" id="L100">	 	boolean found = false;</span>
+<span class="fc" id="L101">	     String oName = &quot;&quot;;</span>
+<span class="fc" id="L102">	     int currentRank = 0;</span>
+	     
+	     // For every name entry in the CSV file
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">	     for (CSVRecord rec : getFileParser(year)) {</span>
+	         // Get its rank if gender matches param
+<span class="fc bfc" id="L107" title="All 2 branches covered.">	         if (rec.get(1).equals(gender)) {</span>
+	             // Get the name whose rank matches param
+<span class="fc" id="L109">	         	currentRank++;</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">	            if (currentRank == rank) {</span>
+<span class="fc" id="L111">	             	found = true;</span>
+<span class="fc" id="L112">	             	oName = rec.get(0);</span>
+<span class="fc" id="L113">	                break;</span>
+	            }
+	         }
+<span class="fc" id="L116">	     }     </span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">	     if (found)</span>
+<span class="fc" id="L118">	     	return oName;</span>
+	     else
+<span class="nc" id="L120">	     	return &quot;information on the name at the specified rank is not available&quot;;</span>
+	 }
+	 
+	 /**
+	  * Get the occurrence of the name of interest in a particular year
+	  * @param year The year of interest
+	  * @param name The name of interest
+	  * @param gender The gender of interest
+	  * @return Occurrence of the name of interest in the according year
+	  */
+	 public static int getOccurrence(int year, String name, String gender) {
+<span class="fc" id="L131">	    boolean found = false;</span>
+<span class="fc" id="L132">	    int occurrence = 0;</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">	     for (CSVRecord rec : getFileParser(year)) {</span>
+	    	// check if gender matches param
+<span class="fc bfc" id="L135" title="All 2 branches covered.">	         if (rec.get(1).equals(gender)) {</span>
+	             // check if name matches param
+<span class="fc bfc" id="L137" title="All 2 branches covered.">	             if (rec.get(0).equals(name)) {</span>
+	            	 // record the occurance
+<span class="fc" id="L139">	             	 found = true;</span>
+<span class="fc" id="L140">	             	occurrence = Integer.parseInt(rec.get(2));</span>
+<span class="fc" id="L141">	             	 break;</span>
+	             }
+	         }
+<span class="fc" id="L144">	     }</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">	     if (found)</span>
+<span class="fc" id="L146">	     	return occurrence;</span>
+	     else
+<span class="fc" id="L148">	     	return -1;</span>
+	 }
+	 
+
+	 public static int getTotalNamesByGender(int year, String gender) {
+<span class="fc" id="L153">		 int uniqueNames = 0;</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">		 for (CSVRecord rec : getFileParser(year)) {</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">			 if (rec.get(1).equals(gender)) {</span>
+<span class="fc" id="L156">				 uniqueNames++;</span>
+			 }
+<span class="fc" id="L158">		 }</span>
+<span class="fc" id="L159">		 return uniqueNames;</span>
+	 }
+
+	 /**
+	  * Get the total birth of the gender of interest in a particular year
+	  * @param year The year of interest
+	  * @param gender The gender of interest
+	  * @return Total birth of the gender of interest in the according year
+	  */
+	 public static int getTotalBirthByGender(int year, String gender) {
+<span class="fc" id="L169">			int totalBirthByGender = 0;</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">			for (CSVRecord rec : getFileParser(year)) {				</span>
+				// check if gender matches param
+<span class="fc bfc" id="L172" title="All 2 branches covered.">		         if (rec.get(1).equals(gender)) {</span>
+<span class="fc" id="L173">		        	 totalBirthByGender += Integer.parseInt(rec.get(2));</span>
+		         }
+<span class="fc" id="L175">			}</span>
+<span class="fc" id="L176">			return totalBirthByGender;</span>
+		 }
+	 
+	 public static List&lt;KthPopularNamesReport.KthPopularNames&gt; getKthOccurrence(String gender, int rankOfNames, int startingYear, int endingYear) {
+<span class="fc" id="L180">		    List &lt;KthPopularNamesReport.KthPopularNames&gt; KthPopularNamesList = new ArrayList&lt;KthPopularNamesReport.KthPopularNames&gt;();</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">		    for (int year = startingYear; year &lt;= endingYear; year++)</span>
+		    {
+<span class="fc" id="L183">		    	int rank = 1;</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">			    for (CSVRecord rec : getFileParser(year))</span>
+			    {
+			    	// check if gender matches param
+<span class="fc bfc" id="L187" title="All 2 branches covered.">			         if (rec.get(1).equals(gender)) </span>
+			         {
+			             // check if name matches param
+<span class="fc bfc" id="L190" title="All 2 branches covered.">			             if (rank == rankOfNames) </span>
+			             {
+			            	 // record the occurance
+<span class="fc" id="L193">			             	 String name = rec.get(0);</span>
+<span class="fc" id="L194">			             	 int occurrence = Integer.parseInt(rec.get(2));</span>
+<span class="fc" id="L195">			             	 int index = -1;</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">			             	 for (int i = 0; i &lt; KthPopularNamesList.size(); i++)</span>
+			             	 {
+<span class="fc bfc" id="L198" title="All 2 branches covered.">			             		 if (KthPopularNamesList.get(i).getName().equals(name))</span>
+			             		 {
+<span class="fc" id="L200">			             			 index = i;</span>
+<span class="fc" id="L201">			             			 break;</span>
+			             		 }
+			             	 }
+<span class="fc bfc" id="L204" title="All 2 branches covered.">			             	 if (index == -1)</span>
+			             	 {
+<span class="fc" id="L206">				             	 KthPopularNamesList.add(new KthPopularNamesReport.KthPopularNames(name, 1, occurrence, &quot;&quot;));</span>
+			             	 }
+			             	 else
+			             	 {
+<span class="fc" id="L210">			             		 KthPopularNamesReport.KthPopularNames original = KthPopularNamesList.get(index);</span>
+<span class="fc" id="L211">			             		 KthPopularNamesList.set(index, new KthPopularNamesReport.KthPopularNames(name, original.getFrequency()+1, original.getOccurrence()+occurrence, &quot;&quot;));</span>
+			             	 }
+<span class="fc" id="L213">			             	 break;</span>
+			             }
+<span class="fc" id="L215">			             rank++;</span>
+			         }
+<span class="fc" id="L217">			     }</span>
+		    }
+<span class="fc" id="L219">		    return KthPopularNamesList;</span>
+		 }
+	 
+ 
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

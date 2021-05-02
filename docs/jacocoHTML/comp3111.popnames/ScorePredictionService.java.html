@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScorePredictionService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PopNames3111</a> &gt; <a href="index.source.html" class="el_package">comp3111.popnames</a> &gt; <span class="el_source">ScorePredictionService.java</span></div><h1>ScorePredictionService.java</h1><pre class="source lang-java linenums">package comp3111.popnames;
+
+import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+
+/**
+ * Task 6: Class that predicts scores for compatible pairs.
+ */
+public class ScorePredictionService {
+	/**
+	 * Gender that can be chosen by user in Task 6
+	 */
+<span class="fc" id="L21">	public enum Gender {</span>
+<span class="fc" id="L22">	    MALE, FEMALE</span>
+	}
+	/**
+	 * Algorithm that can be chosen by user in Task 6
+	 */
+<span class="fc" id="L27">	public enum algorithm {</span>
+<span class="fc" id="L28">		SIMPLE, DETAILED</span>
+	}
+	/**
+	 * Horoscope that can be chosen by user in Task 6
+	 */
+<span class="fc" id="L33">	public enum Horoscope {</span>
+<span class="fc" id="L34">		ARIES, TAURUS, GEMINI, CANCER, LEO, VIRGO, LIBRA, SCORPIO, SAGITTARIUS, CAPRICORN, AQUARIUS, PISCES, NOT_SURE</span>
+	}
+	/**
+	 * Age preference of mate that can be chosen by user in Task 6
+	 */
+<span class="fc" id="L39">	public enum mateAge {</span>
+<span class="fc" id="L40">		YOUNGER, OLDER</span>
+	}
+	
+	/**
+	 * 2d Array storing Horoscope Compatibility Score 
+	 * &lt;br&gt;
+	 * Reference from &lt;a href=&quot;https://numerologysign.com/zodiac-signs-compatibility/&quot;&gt;https://numerologysign.com/zodiac-signs-compatibility/&lt;/a&gt;
+	 */
+<span class="fc" id="L48">	public String[][] HoroscopeCompatibility= {</span>
+			{&quot;50%&quot;, &quot;38%&quot;, &quot;83%&quot;, &quot;42%&quot;, &quot;97%&quot;, &quot;63%&quot;, &quot;85%&quot;, &quot;50%&quot;, &quot;93%&quot;, &quot;47%&quot;, &quot;78%&quot;, &quot;67%&quot;},
+			{&quot;38%&quot;, &quot;65%&quot;, &quot;33%&quot;, &quot;97%&quot;, &quot;73%&quot;, &quot;90%&quot;, &quot;65%&quot;, &quot;88%&quot;, &quot;30%&quot;, &quot;98%&quot;, &quot;58%&quot;, &quot;85%&quot;},
+			{&quot;83%&quot;, &quot;33%&quot;, &quot;60%&quot;, &quot;65%&quot;, &quot;88%&quot;, &quot;68%&quot;, &quot;93%&quot;, &quot;28%&quot;, &quot;60%&quot;, &quot;68%&quot;, &quot;85%&quot;, &quot;53%&quot;},
+			{&quot;42%&quot;, &quot;97%&quot;, &quot;65%&quot;, &quot;75%&quot;, &quot;35%&quot;, &quot;90%&quot;, &quot;43%&quot;, &quot;94%&quot;, &quot;53%&quot;, &quot;83%&quot;, &quot;27%&quot;, &quot;98%&quot;},
+			{&quot;97%&quot;, &quot;73%&quot;, &quot;88%&quot;, &quot;35%&quot;, &quot;45%&quot;, &quot;35%&quot;, &quot;97%&quot;, &quot;58%&quot;, &quot;93%&quot;, &quot;35%&quot;, &quot;68%&quot;, &quot;38%&quot;},
+			{&quot;63%&quot;, &quot;90%&quot;, &quot;68%&quot;, &quot;90%&quot;, &quot;35%&quot;, &quot;65%&quot;, &quot;68%&quot;, &quot;88%&quot;, &quot;48%&quot;, &quot;95%&quot;, &quot;30%&quot;, &quot;88%&quot;},
+			{&quot;85%&quot;, &quot;65%&quot;, &quot;93%&quot;, &quot;43%&quot;, &quot;97%&quot;, &quot;65%&quot;, &quot;68%&quot;, &quot;88%&quot;, &quot;48%&quot;, &quot;95%&quot;, &quot;30%&quot;, &quot;88%&quot;},
+			{&quot;50%&quot;, &quot;88%&quot;, &quot;28%&quot;, &quot;94%&quot;, &quot;58%&quot;, &quot;88%&quot;, &quot;35%&quot;, &quot;80%&quot;, &quot;28%&quot;, &quot;95%&quot;, &quot;73%&quot;, &quot;97%&quot;},
+			{&quot;93%&quot;, &quot;30%&quot;, &quot;60%&quot;, &quot;53%&quot;, &quot;93%&quot;, &quot;48%&quot;, &quot;73%&quot;, &quot;28%&quot;, &quot;45%&quot;, &quot;60%&quot;, &quot;90%&quot;, &quot;63%&quot;},
+			{&quot;47%&quot;, &quot;98%&quot;, &quot;68%&quot;, &quot;83%&quot;, &quot;35%&quot;, &quot;95%&quot;, &quot;55%&quot;, &quot;95%&quot;, &quot;60%&quot;, &quot;75%&quot;, &quot;68%&quot;, &quot;88%&quot;},
+			{&quot;78%&quot;, &quot;58%&quot;, &quot;85%&quot;, &quot;27%&quot;, &quot;68%&quot;, &quot;30%&quot;, &quot;90%&quot;, &quot;73%&quot;, &quot;90%&quot;, &quot;68%&quot;, &quot;45%&quot;, &quot;45%&quot;},
+			{&quot;67%&quot;, &quot;85%&quot;, &quot;53%&quot;, &quot;98%&quot;, &quot;38%&quot;, &quot;88%&quot;, &quot;88%&quot;, &quot;97%&quot;, &quot;63%&quot;, &quot;88%&quot;, &quot;45%&quot;, &quot;60%&quot;},
+	};
+	
+	/**
+	 * 2d Array storing Numerology Compatibility Score
+	 * &lt;br&gt;
+	 * Reference from &lt;a href=&quot;https://www.mindbodygreen.com/articles/most-romantically-compatible-life-path-numbers-in-numerology&quot;&gt;https://www.mindbodygreen.com/articles/most-romantically-compatible-life-path-numbers-in-numerology&lt;/a&gt;
+	 */
+<span class="fc" id="L68">	public String[][] NumerologyCompatibility = {</span>
+			{&quot;100%&quot;,&quot;100%&quot;,&quot;50%&quot;,&quot;20%&quot;,&quot;100%&quot;,&quot;20%&quot;,&quot;50%&quot;,&quot;50%&quot;,&quot;50%&quot;},
+			{&quot;100%&quot;,&quot;100%&quot;,&quot;50%&quot;,&quot;100%&quot;,&quot;20%&quot;,&quot;100%&quot;,&quot;20%&quot;,&quot;100%&quot;,&quot;50%&quot;},
+			{&quot;50%&quot;,&quot;50%&quot;,&quot;100%&quot;,&quot;20%&quot;,&quot;50%&quot;,&quot;100%&quot;,&quot;20%&quot;,&quot;20%&quot;,&quot;100%&quot;},
+			{&quot;20%&quot;,&quot;100%&quot;,&quot;20%&quot;,&quot;100%&quot;,&quot;20%&quot;,&quot;50%&quot;,&quot;50%&quot;,&quot;100%&quot;,&quot;20%&quot;},
+			{&quot;100%&quot;,&quot;20%&quot;,&quot;50%&quot;,&quot;20%&quot;,&quot;100%&quot;,&quot;20%&quot;,&quot;100%&quot;,&quot;50%&quot;,&quot;50%&quot;},
+			{&quot;20%&quot;,&quot;50%&quot;,&quot;100%&quot;,&quot;50%&quot;,&quot;20%&quot;,&quot;100%&quot;,&quot;20%&quot;,&quot;50%&quot;,&quot;100%&quot;},
+			{&quot;50%&quot;,&quot;20%&quot;,&quot;20%&quot;,&quot;100%&quot;,&quot;100%&quot;,&quot;20%&quot;,&quot;20%&quot;,&quot;100%&quot;,&quot;50%&quot;},
+			{&quot;50%&quot;,&quot;100%&quot;,&quot;20%&quot;,&quot;100%&quot;,&quot;50%&quot;,&quot;50%&quot;,&quot;20%&quot;,&quot;100%&quot;,&quot;20%&quot;},
+			{&quot;50%&quot;,&quot;50%&quot;,&quot;100%&quot;,&quot;20%&quot;,&quot;50%&quot;,&quot;100%&quot;,&quot;50%&quot;,&quot;20%&quot;,&quot;100%&quot;},
+	};
+
+	/**
+	 * Name of the person seeking advices (user)
+	 */
+	private String userName;
+	/**
+	 * Gender of the person seeking advices (user)
+	 */
+	private Gender userGender;
+	/**
+	 * Horoscope of the person seeking advices (user)
+	 */
+	private Horoscope userHoroscope;
+	/**
+	 * Birth year of the person seeking advices (user)
+	 */
+	private int userBirthYear;
+	/**
+	 * Name of the person to be matched
+	 */
+	private String mateName;
+	/**
+	 * Gender of the person to be matched
+	 */
+	private Gender mateGender;
+	/**
+	 * Horoscope of the person to be matched
+	 */
+	private Horoscope mateHoroscope;
+	/**
+	 * Age preference of user for the person to be matched
+	 */
+	private mateAge matePreference;
+	
+	/**
+	 * Class constructor for a ScorePredictionService object
+	 * 
+	 * @param userName Name of the person seeking advices
+	 * @param userGender Gender of the person seeking advices
+	 * @param userHoroscope Horoscope of the person seeking advices
+	 * @param userBirthYear Birth year of the person seeking advices
+	 * @param mateName Name of the person to be matched
+	 * @param mateGender Gender of the person to be matched
+	 * @param mateHoroscope Horoscope of the person to be matched
+	 * @param matePreference Age preference of user for the person to be matched
+	 */
+	public ScorePredictionService(String userName, Gender userGender, Horoscope userHoroscope, int userBirthYear,
+<span class="fc" id="L126">			String mateName, Gender mateGender, Horoscope mateHoroscope, mateAge matePreference) {</span>
+<span class="fc" id="L127">		this.userName = userName;</span>
+<span class="fc" id="L128">		this.userGender = userGender;</span>
+<span class="fc" id="L129">		this.userHoroscope = userHoroscope;</span>
+<span class="fc" id="L130">		this.userBirthYear = userBirthYear;</span>
+		
+<span class="fc" id="L132">		this.mateName = mateName;</span>
+<span class="fc" id="L133">		this.mateGender = mateGender;</span>
+<span class="fc" id="L134">		this.mateHoroscope = mateHoroscope;</span>
+<span class="fc" id="L135">		this.matePreference = matePreference;</span>
+<span class="fc" id="L136">	}</span>
+
+	/**
+	 * Check if the parameter name is a valid name
+	 * @param name Any name
+	 * @return Short message whether it is a valid name or not
+	 */
+	public static String isValidName(String name) {
+<span class="fc bfc" id="L144" title="All 2 branches covered.">		if (name.trim().isEmpty()) return &quot;Please input a name! \n&quot;;</span>
+<span class="fc bfc" id="L145" title="All 4 branches covered.">		if (name.length() &lt; 2 || name.length() &gt; 15) return &quot;Please input a name that has 2-15 characters!\n&quot;;</span>
+<span class="fc" id="L146">		String regex = &quot;[A-Za-z\\s]+&quot;;      </span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">	    if (!name.matches(regex)) return &quot;Name is invalid. Please input valid English character only!\n &quot;;</span>
+<span class="fc" id="L148">	    else return &quot;SUCCESS&quot;;</span>
+	}
+	
+	/**
+	 * Get the compatibility using simple algorithm
+	 * &lt;p&gt;
+	 * If the name of user and the name of mate are of the same length, return score 100, otherwise return 0.
+	 * &lt;/p&gt;
+	 * @return Score in float
+	 */
+	public float getSimpleAlgorithmScore() {
+<span class="fc bfc" id="L159" title="All 2 branches covered.">		if (this.userName.length() == this.mateName.length()) {</span>
+<span class="fc" id="L160">			return 100;</span>
+<span class="fc" id="L161">		} else return 0;</span>
+	}
+	
+	/**
+	 * Get the summary of result of simple algorithm
+	 * @return Summary of result of simple algorithm in string
+	 */
+	public String getSimpleResult() {
+<span class="fc" id="L169">		float score = getSimpleAlgorithmScore();</span>
+<span class="fc" id="L170">		String result = &quot;The Compatibility score is &quot;+String.format(&quot;%.0f%%&quot;,score)+&quot;\n&quot;;</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">		if(score==0) {</span>
+<span class="fc" id="L172">			result += &quot;The name are not very compatible..&quot;;</span>
+		}
+<span class="fc bfc" id="L174" title="All 2 branches covered.">		if(score==100) result +=&quot;Wow! Your names are highly compatible! You guys are born to be together!&quot;;</span>
+<span class="fc" id="L175">		result+=&quot; Try to use 'detailed' algorithm to get a more informative result from another point of view!&quot;;</span>
+<span class="fc" id="L176">		return result;</span>
+	}
+	
+	/**
+	 * Get the summary of result of simple algorithm
+	 * &lt;p&gt;
+	 * The calculation is referenced from &lt;a href=&quot;https://en.wikipedia.org/wiki/Numerology#Pythagorean_system&quot;&gt;https://en.wikipedia.org/wiki/Numerology#Pythagorean_system&lt;/a&gt;
+	 * &lt;/p&gt;
+	 * @param name Any name
+	 * @return Life Path number
+	 */
+	public static int getLifePathNumber(String name) {
+<span class="fc" id="L188">		String temp = name.toLowerCase();</span>
+		int sum;
+		while (true) {
+<span class="fc" id="L191">			sum = 0;</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">			for(int i = 0; i &lt; temp.length(); i++)</span>
+			{
+<span class="fc" id="L194">				char c = temp.charAt(i);</span>
+<span class="fc bfc" id="L195" title="All 11 branches covered.">				switch(c) { // Source: https://en.wikipedia.org/wiki/Numerology</span>
+					case 'a': case 'j': case 's':
+<span class="fc" id="L197">						sum += 1;</span>
+<span class="fc" id="L198">						break;</span>
+					case 'b': case 'k': case 't':
+<span class="fc" id="L200">						sum += 2;</span>
+<span class="fc" id="L201">						break;</span>
+					case 'c': case 'l': case 'u':
+<span class="fc" id="L203">						sum += 3;</span>
+<span class="fc" id="L204">						break;</span>
+					case 'd': case 'm': case 'v':
+<span class="fc" id="L206">						sum += 4;</span>
+<span class="fc" id="L207">						break;</span>
+					case 'e': case 'n': case 'w':
+<span class="fc" id="L209">						sum += 5;</span>
+<span class="fc" id="L210">						break;</span>
+					case 'f': case 'o': case 'x':
+<span class="fc" id="L212">						sum += 6;</span>
+<span class="fc" id="L213">						break;</span>
+					case 'g': case 'p': case 'y':
+<span class="fc" id="L215">						sum += 7;</span>
+<span class="fc" id="L216">						break;</span>
+					case 'h': case 'q': case 'z':
+<span class="fc" id="L218">						sum += 8;</span>
+<span class="fc" id="L219">						break;</span>
+					case 'i': case 'r':
+<span class="fc" id="L221">						sum += 9;</span>
+<span class="fc" id="L222">						break;</span>
+					case ' ':
+<span class="fc" id="L224">						sum += 0;</span>
+<span class="fc" id="L225">						break;</span>
+					default: 
+<span class="fc" id="L227">						sum += Integer.parseInt(String.valueOf(c));</span>
+						break;
+				}
+			}
+<span class="fc bfc" id="L231" title="All 2 branches covered.">			if (sum &lt;= 9) {</span>
+<span class="fc" id="L232">				return sum;</span>
+			}
+<span class="fc" id="L234">			temp = String.valueOf(sum);</span>
+		}
+	}
+	
+	/**
+	 * Get the summary of detailed compatibility 
+	 * &lt;p&gt;
+	 * The detailed algorithm is composed of two parts - numerology and astrology.
+	 * If horoscope of the person to be matched is not sure, the score will be calculated purely by life path number compatibility.
+	 * Otherwise, the score will be calculated by 60% of horoscope compatibility and 40% of life path number compatibility.
+	 * &lt;/p&gt;
+	 * @return Summary of detailed compatibility 
+	 */
+	public String getDetailedCompatibility() {
+<span class="fc" id="L248">		String result = &quot;&quot;;</span>
+<span class="fc" id="L249">		int userHoroscopeVal = this.userHoroscope.ordinal();</span>
+<span class="fc" id="L250">		int mateHoroscopeVal = this.mateHoroscope.ordinal();</span>
+		
+		// Get numerology score
+<span class="fc" id="L253">		int userLifeNum = this.getLifePathNumber(this.userName);</span>
+<span class="fc" id="L254">		int mateLifeNum = this.getLifePathNumber(this.mateName);</span>
+<span class="fc" id="L255">		String numeroLogyScore = NumerologyCompatibility[userLifeNum-1][mateLifeNum-1];</span>
+<span class="fc" id="L256">		float numeroLogyScoreValue = Float.parseFloat(numeroLogyScore.replace(&quot;%&quot;,&quot;&quot;)) / 100;</span>
+		
+		// If the mate horoscope is not sure, only use the numerology score
+<span class="fc" id="L259">		result  += &quot;The Compatibility score is &quot;+numeroLogyScore+&quot;!\n&quot;;</span>
+<span class="fc" id="L260">		String numeroLogyExplanation = &quot;Your life number is &quot;+userLifeNum+&quot; and &quot;+this.mateName+&quot; life number is &quot;+mateLifeNum+&quot;. &quot;;</span>
+<span class="fc bfc" id="L261" title="All 2 branches covered.">		if (numeroLogyScore == &quot;100%&quot;) {</span>
+<span class="fc" id="L262">			numeroLogyExplanation += &quot;In numerology, your life number is highly compatible with the number of your partner. &quot;</span>
+					+ &quot;You guys tend to be riding a similar wavelength. When you meet your partner, things instantly click.&quot;
+					+ &quot;These connections flow with ease and feel destined and filled with magic.\n&quot;;
+<span class="fc bfc" id="L265" title="All 2 branches covered.">		} else if (numeroLogyScore == &quot;50%&quot;) {</span>
+<span class="fc" id="L266">			numeroLogyExplanation += &quot;In numerology, your life number is neutral with the number of your partner. &quot;</span>
+					+ &quot;That means, you two can either be very compatible or not, or that could perhaps be entirely neutral, holding no real charge.\n &quot;;
+		} else {
+<span class="fc" id="L269">			numeroLogyExplanation += &quot;In numerology, your life number is not very compatible with the number of your partner. &quot;</span>
+					+ &quot;You guys may have different core values and potential to clash. It's not written in stone that you will experience conflict with these numbers, &quot;
+					+ &quot;but you will be challenged to see the world from a new perspective. Though this may feel seemingly negative, these pairings actually have much to teach and learn from each other.\n&quot;;
+		}
+<span class="fc bfc" id="L273" title="All 2 branches covered.">		if(this.mateHoroscope.name() == &quot;NOT_SURE&quot;) {</span>
+<span class="fc" id="L274">			result += numeroLogyExplanation;</span>
+<span class="fc" id="L275">			return result;</span>
+		};
+		// If the mate horoscope is known, 40% numerology and 60% horoscope score
+<span class="fc" id="L278">		float horoscopeScoreValue = 0;</span>
+<span class="fc" id="L279">		String horsocpeScore = HoroscopeCompatibility[userHoroscopeVal][mateHoroscopeVal];</span>
+<span class="fc" id="L280">		horoscopeScoreValue = Float.parseFloat(horsocpeScore.replace(&quot;%&quot;,&quot;&quot;)) / 100;</span>
+		
+<span class="fc" id="L282">		double scoreValue = horoscopeScoreValue*0.6+ numeroLogyScoreValue*0.4;</span>
+<span class="fc" id="L283">		result = &quot;The Compatibility score is &quot;+String.format(&quot;%.0f%%&quot;,scoreValue*100)+&quot;!\n&quot;;</span>
+		
+<span class="fc" id="L285">		result += numeroLogyExplanation;</span>
+		
+<span class="fc bfc" id="L287" title="All 2 branches covered.">		if(scoreValue&lt;0.5) {</span>
+<span class="fc" id="L288">			result += &quot;\nWhile in astrology, your horoscopes are not very compatible.. But don't worry too much and check our advice below :)&quot;;</span>
+		}
+<span class="fc bfc" id="L290" title="All 2 branches covered.">		else if(scoreValue&gt;0.9) result +=&quot;\nWhile in astrology, your horoscopes are highly compatible! You guys are born to be together!&quot;;</span>
+<span class="fc" id="L291">		else result +=&quot;\nWhile in astrology, your horoscopes are quite compatible! Check our advice below :) &quot;;</span>
+<span class="fc" id="L292">		return result;</span>
+	}
+	
+	/**
+	 * Get the summary of horoscope explanation
+	 * &lt;p&gt;
+	 * If horoscope of the person to be matched is not sure, the returned summary will only include the meaning of the user's horoscope element.
+	 * Otherwise, the returned summary will include the meaning of both the user and the partner's horoscope element, and some advice for their relationship.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * Zodiac Compatibility and zodiac sign meaning is referenced from &lt;br&gt;
+	 * &lt;a href=&quot;https://www.elitedaily.com/life/zodiac-signs-element-can-actually-reveal-compatibility/2064007&quot;&gt;https://www.elitedaily.com/life/zodiac-signs-element-can-actually-reveal-compatibility/2064007&lt;/a&gt; &lt;br&gt;
+	 * &lt;a href=&quot;https://www.thecut.com/article/how-to-understand-every-zodiac-sign-by-element.html&quot;&gt;https://www.thecut.com/article/how-to-understand-every-zodiac-sign-by-element.html&lt;/a&gt;
+	 * &lt;/p&gt;
+	 * @return Summary of horoscope explanation
+	 */
+	public String getHoroscopeExplanation() {
+		
+<span class="fc" id="L310">		String recommendation = &quot;Horoscopes are actually grouped into four elements — fire, water, earth, and air — with three signs in each.\n\n&quot;;</span>
+<span class="fc" id="L311">		String userHoroscope = this.userHoroscope.name();</span>
+<span class="fc" id="L312">		String mateHoroscope = this.mateHoroscope.name();</span>
+		String userSign;
+		String userSignCharacteristics;
+		String mateSign;
+		String mateSignCharacteristics;
+		
+		// User
+<span class="pc bpc" id="L319" title="1 of 6 branches missed.">		if(userHoroscope == &quot;ARIES&quot; || userHoroscope == &quot;LEO&quot; || userHoroscope == &quot;SAGITTARIUS&quot;) {</span>
+<span class="fc" id="L320">			userSign = &quot;Fire&quot;;</span>
+<span class="fc" id="L321">			userSignCharacteristics = &quot;The fire signs contain the spark of life within them. Like fire, you are bright, warm, and enticing. You love the other innocently with you whole being and will lead by the heart rather than the head.\n&quot;;</span>
+		}
+<span class="pc bpc" id="L323" title="2 of 6 branches missed.">		else if (userHoroscope == &quot;TAURUS&quot; || userHoroscope == &quot;VIRGO&quot; || userHoroscope == &quot;CAPRICORN&quot;) {</span>
+<span class="fc" id="L324">			userSign = &quot;Earth&quot;;</span>
+<span class="fc" id="L325">			userSignCharacteristics = &quot;The earth signs keep the world spinning like an angel. You get down to work when your partner need it most and keep everyone sane. Earth signs are wise, stable, sensual, and, yes, grounded.\n&quot;;</span>
+		}
+<span class="pc bpc" id="L327" title="1 of 6 branches missed.">		else if (userHoroscope == &quot;GEMINI&quot; || userHoroscope == &quot;LIBRA&quot; || userHoroscope == &quot;AQUARIUS&quot;) {</span>
+<span class="fc" id="L328">			userSign = &quot;Air&quot;;</span>
+<span class="fc" id="L329">			userSignCharacteristics = &quot;The air signs are some of the hardest people to pin down, and that is just the way they like it! Air signs are quick, curious, flirty, and smart. \n&quot;;</span>
+		}
+		else {
+<span class="fc" id="L332">			userSign = &quot;Water&quot;;</span>
+<span class="fc" id="L333">			userSignCharacteristics = &quot;The water signs keep everyone in touch with the collective heart and soul of humanity. Being the most intuitive, some say psychic triplicity, water signs are great at speaking and reading between the lines. You are dreamy, sweet, empathetic, dramatic, and caring.\n&quot;;</span>
+		}
+		
+<span class="fc" id="L336">		recommendation += &quot;Your horoscope &quot;+ this.userHoroscope.name() + &quot; belongs to the element &quot;+ userSign+&quot;.\n&quot;;</span>
+<span class="fc" id="L337">		recommendation += userSignCharacteristics;</span>
+<span class="fc bfc" id="L338" title="All 2 branches covered.">		if (mateHoroscope == &quot;NOT_SURE&quot;) {</span>
+<span class="fc" id="L339">			return recommendation;</span>
+		}
+		// Mate
+<span class="pc bpc" id="L342" title="2 of 6 branches missed.">		if(mateHoroscope == &quot;ARIES&quot; || mateHoroscope == &quot;LEO&quot; || mateHoroscope == &quot;SAGITTARIUS&quot;) {</span>
+<span class="fc" id="L343">			mateSign = &quot;Fire&quot;;</span>
+<span class="fc" id="L344">			mateSignCharacteristics = &quot;Fire signs are special. As we all know, a fire could heat your home and completely destroy it, but on the other hand, it also creates light in the dark and totally raze a city. Be careful of “burnout” or getting engulfed by fire's (often sporadic) energy — always take time to recharge and give each other a break.\n&quot;;</span>
+		}
+<span class="pc bpc" id="L346" title="2 of 6 branches missed.">		else if (mateHoroscope == &quot;TAURUS&quot; || mateHoroscope == &quot;VIRGO&quot; || mateHoroscope == &quot;CAPRICORN&quot;) {</span>
+<span class="fc" id="L347">			mateSign = &quot;Earth&quot;;</span>
+<span class="fc" id="L348">			mateSignCharacteristics = &quot;Earth is something real, corporeal. The stuff that emerges from the earth — precious stones, harvests, clay — has real value in the material world. Earth signs are sometimes being too logical and rigid. Even trees have to bend in the wind so they do not snap. Try to understand them when they are stubborn and unyielding.\n&quot;;</span>
+		}
+<span class="pc bpc" id="L350" title="1 of 6 branches missed.">		else if (mateHoroscope == &quot;GEMINI&quot; || mateHoroscope == &quot;LIBRA&quot; || mateHoroscope == &quot;AQUARIUS&quot;) {</span>
+<span class="fc" id="L351">			mateSign = &quot;Air&quot;;</span>
+<span class="fc" id="L352">			mateSignCharacteristics = &quot;Air signs are unlimited by space and can drift everywhere, from places to people; as such, they’re vulnerable to overindulging in absolute fantasy. Watch out for air signs floating off, ghosting you, or simply vanishing. When they do commit to people or projects, they need it to be interesting to stick around.\n&quot;;</span>
+		}
+		else {
+<span class="fc" id="L355">			mateSign = &quot;Water&quot;;</span>
+<span class="fc" id="L356">			mateSignCharacteristics = &quot;The water signs are emotional, intuitive, and deeply in touch with their subconscious. Be careful not to emotionally overwork them and avoid pity parties. Water signs love deeper than anyone else, and would do anything to help out people in need.\n&quot;;</span>
+		}
+<span class="fc" id="L358">		recommendation += &quot;\nYour soulmate's horoscope &quot;+ this.mateHoroscope.name() + &quot; belongs to the element &quot;+ mateSign+&quot;.\n&quot;;</span>
+<span class="fc" id="L359">		recommendation += mateSignCharacteristics;</span>
+		
+<span class="fc" id="L361">		return recommendation;</span>
+	}
+	
+	/**
+	 * Get the summary of Chinese zodiac recommendation
+	 * &lt;p&gt;
+	 * User's Chinese zodiac sign is generated based on the provided birth year. 
+	 * The returned summary shows what Chinese zodiac sign will be most compatible to the user.
+	 * Based on the age preference selected by user, the summary will suggest 2-4 birth years that will be compatible to the user.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * Chinese Zodiac Compatibility is referenced from &lt;br&gt;
+	 * &lt;a href=&quot;https://en.wikipedia.org/wiki/Chinese_zodiac&quot;&gt;https://en.wikipedia.org/wiki/Chinese_zodiac&lt;/a&gt; &lt;br&gt;
+	 * &lt;a href=&quot;https://www.travelchinaguide.com/intro/social_customs/zodiac/compatibility.htm&quot;&gt;https://www.travelchinaguide.com/intro/social_customs/zodiac/compatibility.htm&lt;/a&gt;
+	 * &lt;/p&gt;
+	 * @return Summary of Chinese zodiac recommendation
+	 */
+	public String getChineseZodiacRecommendation() {
+
+<span class="fc" id="L380">		String recommendation = &quot;&quot;;</span>
+<span class="pc bpc" id="L381" title="1 of 13 branches missed.">		switch(this.userBirthYear % 12) {</span>
+			case 0:
+<span class="fc" id="L383">				recommendation +=&quot;Your Chinese Zodiac sign is Monkey!\n&quot;;</span>
+<span class="fc" id="L384">				recommendation +=&quot;And based on your zodiac sign, your best match is: Ox, Rabbit. &quot;;</span>
+<span class="fc bfc" id="L385" title="All 2 branches covered.">				if (matePreference == mateAge.OLDER) {</span>
+<span class="fc" id="L386">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear-5) + &quot;, &quot; + Integer.toString(this.userBirthYear-7);</span>
+				}
+<span class="pc bpc" id="L388" title="1 of 2 branches missed.">				else if (matePreference == mateAge.YOUNGER) {</span>
+<span class="fc" id="L389">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear+5) + &quot;, &quot; + Integer.toString(this.userBirthYear+7);</span>
+<span class="pc bpc" id="L390" title="1 of 2 branches missed.">					if (this.userBirthYear+7 &gt;2021 ) {</span>
+<span class="fc" id="L391">						recommendation += &quot; (guess you may need to wait them to be born and grow up :p)&quot;;</span>
+					}
+				}
+				break;
+			case 1:
+<span class="fc" id="L396">				recommendation +=&quot;Your Chinese Zodiac sign is Rooster\n!&quot;;</span>
+<span class="fc" id="L397">				recommendation +=&quot;And based on your zodiac sign, your best match is: Ox, Snake. &quot;;</span>
+<span class="fc bfc" id="L398" title="All 2 branches covered.">				if (matePreference == mateAge.OLDER) {</span>
+<span class="fc" id="L399">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear-4) + &quot;, &quot; + Integer.toString(this.userBirthYear-8);</span>
+				}
+<span class="pc bpc" id="L401" title="1 of 2 branches missed.">				else if (matePreference == mateAge.YOUNGER) {</span>
+<span class="fc" id="L402">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear+4) + &quot;, &quot; + Integer.toString(this.userBirthYear+8);</span>
+<span class="pc bpc" id="L403" title="1 of 2 branches missed.">					if (this.userBirthYear+8 &gt;2021 ) {</span>
+<span class="fc" id="L404">						recommendation += &quot; (guess you may need to wait them to be born and grow up :p)&quot;;</span>
+					}
+				}
+				break;
+			case 2:
+<span class="fc" id="L409">				recommendation +=&quot;Your Chinese Zodiac sign is Dog!\n&quot;;</span>
+<span class="fc" id="L410">				recommendation +=&quot;And based on your zodiac sign, your best match is: Rabbit. &quot;;</span>
+<span class="fc bfc" id="L411" title="All 2 branches covered.">				if (matePreference == mateAge.OLDER) {</span>
+<span class="fc" id="L412">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear-7) + &quot;, &quot; + Integer.toString(this.userBirthYear-14);</span>
+				}
+<span class="pc bpc" id="L414" title="1 of 2 branches missed.">				else if (matePreference == mateAge.YOUNGER) {</span>
+<span class="fc" id="L415">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear+5) + &quot;, &quot; + Integer.toString(this.userBirthYear+10);</span>
+<span class="pc bpc" id="L416" title="1 of 2 branches missed.">					if (this.userBirthYear+10 &gt;2021 ) {</span>
+<span class="fc" id="L417">						recommendation += &quot; (guess you may need to wait them to be born and grow up :p)&quot;;</span>
+					}
+				}
+				break;
+			case 3:
+<span class="fc" id="L422">				recommendation +=&quot;Your Chinese Zodiac sign is Pig!\n&quot;;</span>
+<span class="fc" id="L423">				recommendation +=&quot;And based on your zodiac sign, your best match is: Tiger, Rabbit, Sheep. &quot;;</span>
+<span class="fc bfc" id="L424" title="All 2 branches covered.">				if (matePreference == mateAge.OLDER) {</span>
+<span class="fc" id="L425">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear-3) + &quot;, &quot; + Integer.toString(this.userBirthYear-8) + &quot;, &quot; + Integer.toString(this.userBirthYear-9);</span>
+				}
+<span class="pc bpc" id="L427" title="1 of 2 branches missed.">				else if (matePreference == mateAge.YOUNGER) {</span>
+<span class="fc" id="L428">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear+3) + &quot;, &quot; + Integer.toString(this.userBirthYear+4) + &quot;, &quot; + Integer.toString(this.userBirthYear+9);</span>
+<span class="pc bpc" id="L429" title="1 of 2 branches missed.">					if (this.userBirthYear+9 &gt;2021 ) {</span>
+<span class="fc" id="L430">						recommendation += &quot; (guess you may need to wait them to be born and grow up :p)&quot;;</span>
+					}
+				}
+				break;
+			case 4:
+<span class="fc" id="L435">				recommendation +=&quot;Your Chinese Zodiac sign is Rat!\n&quot;;</span>
+<span class="fc" id="L436">				recommendation +=&quot;And based on your zodiac sign, your best match is: Ox, Dragon, Monkey. &quot;;</span>
+<span class="fc bfc" id="L437" title="All 2 branches covered.">				if (matePreference == mateAge.OLDER) {</span>
+<span class="fc" id="L438">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear-4) + &quot;, &quot; + Integer.toString(this.userBirthYear-8)+ &quot;, &quot; + Integer.toString(this.userBirthYear-11);</span>
+				}
+<span class="pc bpc" id="L440" title="1 of 2 branches missed.">				else if (matePreference == mateAge.YOUNGER) {</span>
+<span class="fc" id="L441">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear+1) + &quot;, &quot; + Integer.toString(this.userBirthYear+4)+ &quot;, &quot; + Integer.toString(this.userBirthYear+8);</span>
+<span class="pc bpc" id="L442" title="1 of 2 branches missed.">					if (this.userBirthYear+8 &gt;2021 ) {</span>
+<span class="nc" id="L443">						recommendation += &quot; (guess you may need to wait them to be born and grow up :p)&quot;;</span>
+					}
+				}
+				break;
+			case 5:
+<span class="fc" id="L448">				recommendation +=&quot;Your Chinese Zodiac sign is Ox!\n&quot;;</span>
+<span class="fc" id="L449">				recommendation +=&quot;And based on your zodiac sign, your best match is: Rat, Snake, Rooster. &quot;;</span>
+<span class="fc bfc" id="L450" title="All 2 branches covered.">				if (matePreference == mateAge.OLDER) {</span>
+<span class="fc" id="L451">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear-1) + &quot;, &quot; + Integer.toString(this.userBirthYear-4) + &quot;, &quot; + Integer.toString(this.userBirthYear-8);</span>
+				}
+<span class="pc bpc" id="L453" title="1 of 2 branches missed.">				else if (matePreference == mateAge.YOUNGER) {</span>
+<span class="fc" id="L454">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear+4) + &quot;, &quot; + Integer.toString(this.userBirthYear+8)+ &quot;, &quot; + Integer.toString(this.userBirthYear+11);</span>
+<span class="pc bpc" id="L455" title="1 of 2 branches missed.">					if (this.userBirthYear+11 &gt;2021 ) {</span>
+<span class="nc" id="L456">						recommendation += &quot; (guess you may need to wait them to be born and grow up :p)&quot;;</span>
+					}
+				}
+				break;
+			case 6:
+<span class="fc" id="L461">				recommendation +=&quot;Your Chinese Zodiac sign is Tiger!\n&quot;;</span>
+<span class="fc" id="L462">				recommendation +=&quot;And based on your zodiac sign, your best match is: Dragon, Horse, Pig. &quot;;</span>
+<span class="fc bfc" id="L463" title="All 2 branches covered.">				if (matePreference == mateAge.OLDER) {</span>
+<span class="fc" id="L464">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear-3) + &quot;, &quot; + Integer.toString(this.userBirthYear-8) + &quot;, &quot; + Integer.toString(this.userBirthYear-10);</span>
+				}
+<span class="pc bpc" id="L466" title="1 of 2 branches missed.">				else if (matePreference == mateAge.YOUNGER) {</span>
+<span class="fc" id="L467">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear+2) + &quot;, &quot; + Integer.toString(this.userBirthYear+4)+ &quot;, &quot; + Integer.toString(this.userBirthYear+9);</span>
+<span class="pc bpc" id="L468" title="1 of 2 branches missed.">					if (this.userBirthYear+9 &gt;2021 ) {</span>
+<span class="nc" id="L469">						recommendation += &quot; (guess you may need to wait them to be born and grow up :p)&quot;;</span>
+					}
+				}
+				break;
+			case 7:
+<span class="fc" id="L474">				recommendation +=&quot;Your Chinese Zodiac sign is Rabbit!\n&quot;;</span>
+<span class="fc" id="L475">				recommendation +=&quot;And based on your zodiac sign, your best match is: Sheep, Monkey, Dog. &quot;;</span>
+<span class="fc bfc" id="L476" title="All 2 branches covered.">				if (matePreference == mateAge.OLDER) {</span>
+<span class="fc" id="L477">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear-5) + &quot;, &quot; + Integer.toString(this.userBirthYear-7) + &quot;, &quot; + Integer.toString(this.userBirthYear-8);</span>
+				}
+<span class="pc bpc" id="L479" title="1 of 2 branches missed.">				else if (matePreference == mateAge.YOUNGER) {</span>
+<span class="fc" id="L480">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear+4) + &quot;, &quot; + Integer.toString(this.userBirthYear+5) + &quot;, &quot; + Integer.toString(this.userBirthYear+7);</span>
+<span class="pc bpc" id="L481" title="1 of 2 branches missed.">					if (this.userBirthYear+7 &gt;2021 ) {</span>
+<span class="nc" id="L482">						recommendation += &quot; (guess you may need to wait them to be born and grow up :p)&quot;;</span>
+					}
+				}
+				break;
+			case 8: 
+<span class="fc" id="L487">				recommendation +=&quot;Your Chinese Zodiac sign is Dragon!\n&quot;;</span>
+<span class="fc" id="L488">				recommendation +=&quot;And based on your zodiac sign, your best match is: Rooster, Rat, Monkey. &quot;;</span>
+<span class="fc bfc" id="L489" title="All 2 branches covered.">				if (matePreference == mateAge.OLDER) {</span>
+<span class="fc" id="L490">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear-4) + &quot;, &quot; + Integer.toString(this.userBirthYear-7) + &quot;, &quot; + Integer.toString(this.userBirthYear-8);</span>
+				}
+<span class="pc bpc" id="L492" title="1 of 2 branches missed.">				else if (matePreference == mateAge.YOUNGER) {</span>
+<span class="fc" id="L493">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear+4) + &quot;, &quot; + Integer.toString(this.userBirthYear+5)+ &quot;, &quot; + Integer.toString(this.userBirthYear+8);</span>
+<span class="pc bpc" id="L494" title="1 of 2 branches missed.">					if (this.userBirthYear+8 &gt;2021 ) {</span>
+<span class="nc" id="L495">						recommendation += &quot; (guess you may need to wait them to be born and grow up :p)&quot;;</span>
+					}
+				}
+				break;
+			case 9:
+<span class="fc" id="L500">				recommendation +=&quot;Your Chinese Zodiac sign is Snake!\n&quot;;</span>
+<span class="fc" id="L501">				recommendation +=&quot;And based on your zodiac sign, your best match is: Dragon, Rooster. &quot;;</span>
+<span class="fc bfc" id="L502" title="All 2 branches covered.">				if (matePreference == mateAge.OLDER) {</span>
+<span class="fc" id="L503">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear-1) + &quot;, &quot; + Integer.toString(this.userBirthYear-8);</span>
+				}
+<span class="pc bpc" id="L505" title="1 of 2 branches missed.">				else if (matePreference == mateAge.YOUNGER) {</span>
+<span class="fc" id="L506">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear+4) + &quot;, &quot; + Integer.toString(this.userBirthYear+11);</span>
+<span class="fc bfc" id="L507" title="All 2 branches covered.">					if (this.userBirthYear+11 &gt;2021 ) {</span>
+<span class="fc" id="L508">						recommendation += &quot; (guess you may need to wait them to be born and grow up :p)&quot;;</span>
+					}
+				}
+				break;
+			case 10:
+<span class="fc" id="L513">				recommendation +=&quot;Your Chinese Zodiac sign is Horse!\n&quot;;</span>
+<span class="fc" id="L514">				recommendation +=&quot;And based on your zodiac sign, your best match is: Tiger, Sheep, Rabbit. &quot;;</span>
+<span class="fc bfc" id="L515" title="All 2 branches covered.">				if (matePreference == mateAge.OLDER) {</span>
+<span class="fc" id="L516">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear-3) + &quot;, &quot; + Integer.toString(this.userBirthYear-4)+ &quot;, &quot; + Integer.toString(this.userBirthYear-3) + &quot;, &quot; + Integer.toString(this.userBirthYear-11);</span>
+				}
+<span class="pc bpc" id="L518" title="1 of 2 branches missed.">				else if (matePreference == mateAge.YOUNGER) {</span>
+<span class="fc" id="L519">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear+1) + &quot;, &quot; + Integer.toString(this.userBirthYear+8) + &quot;, &quot; + Integer.toString(this.userBirthYear+9);</span>
+<span class="pc bpc" id="L520" title="1 of 2 branches missed.">					if (this.userBirthYear+9 &gt;2021 ) {</span>
+<span class="fc" id="L521">						recommendation += &quot; (guess you may need to wait them to be born and grow up :p)&quot;;</span>
+					}
+				}
+				break;
+			case 11:
+<span class="fc" id="L526">				recommendation +=&quot;Your Chinese Zodiac sign is Sheep!\n&quot;;</span>
+<span class="fc" id="L527">				recommendation +=&quot;And based on your zodiac sign, your best match is: Horse, Rabbit, Pig. &quot;;</span>
+<span class="fc bfc" id="L528" title="All 2 branches covered.">				if (matePreference == mateAge.OLDER) {</span>
+<span class="fc" id="L529">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear-1) + &quot;, &quot; + Integer.toString(this.userBirthYear-4) + &quot;, &quot; + Integer.toString(this.userBirthYear-8);</span>
+				}
+<span class="pc bpc" id="L531" title="1 of 2 branches missed.">				else if (matePreference == mateAge.YOUNGER) {</span>
+<span class="fc" id="L532">					recommendation = recommendation + &quot;\nAccording to your age preference, you could find people who are born in &quot; + Integer.toString(this.userBirthYear+4) + &quot;, &quot; + Integer.toString(this.userBirthYear+8) + &quot;, &quot; + Integer.toString(this.userBirthYear+11) ;</span>
+<span class="fc bfc" id="L533" title="All 2 branches covered.">					if (this.userBirthYear+11 &gt;2021 ) {</span>
+<span class="fc" id="L534">						recommendation += &quot; (guess you may need to wait them to be born and grow up :p)&quot;;</span>
+					}
+				}
+		}
+<span class="fc" id="L538">		return recommendation;</span>
+	}
+	
+	/**
+	 * Generate a full report showing the detailed compatibility. A dialog will pop up.
+	 */
+	public void getDetailedReport() {
+<span class="fc" id="L545">		String header = &quot;Compatability between &quot;+ this.userName + &quot; and &quot;+this.mateName;</span>
+		
+<span class="fc" id="L547">		VBox vbox = new VBox();</span>
+		
+		Image img;
+		ImageView imgView;
+		
+<span class="fc bfc" id="L552" title="All 4 branches covered.">		if (this.userGender == Gender.FEMALE &amp;&amp; this.mateGender == Gender.FEMALE ) {</span>
+<span class="fc" id="L553">			img = new Image(&quot;file:src/main/resources/images/lesbianmarriage.png&quot;, 300, 300, true, true);</span>
+<span class="fc" id="L554">	        imgView = new ImageView(img);</span>
+		}
+<span class="pc bpc" id="L556" title="1 of 4 branches missed.">		else if (this.userGender == Gender.MALE &amp;&amp; this.mateGender == Gender.MALE ) {</span>
+<span class="fc" id="L557">			img = new Image(&quot;file:src/main/resources/images/gaymarriage.png&quot;, 300, 300, true, true);</span>
+<span class="fc" id="L558">	        imgView = new ImageView(img);</span>
+		}
+		else {
+<span class="fc" id="L561">			img = new Image(&quot;file:src/main/resources/images/straightmarriage.png&quot;, 300, 300, true, true);</span>
+<span class="fc" id="L562">	        imgView = new ImageView(img);</span>
+		}
+<span class="fc" id="L564">		vbox.getChildren().add(imgView);</span>
+		
+		// Create the headers
+<span class="fc" id="L567">		Text headerOne = new Text(&quot;A. Compatibility Score&quot;);</span>
+<span class="fc" id="L568">		headerOne.setFont(Font.font(null, FontWeight.BOLD, 17));</span>
+<span class="fc" id="L569">		Text headerTwo = new Text(&quot;B. Hidden meaning behind your Horoscope&quot;);</span>
+<span class="fc" id="L570">		headerTwo.setFont(Font.font(null, FontWeight.BOLD, 17));</span>
+<span class="fc" id="L571">		Text headerThree = new Text(&quot;C. Recommendation based on your Chinese Zodiac sign&quot;);</span>
+<span class="fc" id="L572">		headerThree.setFont(Font.font(null, FontWeight.BOLD, 17));</span>
+		
+		// For &quot;A. Compatibility Scores&quot;
+<span class="fc" id="L575">		Text summary = new Text(getDetailedCompatibility());</span>
+<span class="fc" id="L576">		summary.setWrappingWidth(550);</span>
+<span class="fc" id="L577">		Text scoreRemarks = new Text();</span>
+<span class="fc" id="L578">		scoreRemarks.setText(&quot;Remarks: In astrology, your compatibility with your partner is measured by your horoscopes. &quot;</span>
+				+ &quot;Numerology is an awesome companion to astrology. Pythagorean system is used to obtain your partner's and your life numbers.&quot;);
+<span class="fc" id="L580">		scoreRemarks.setFont(Font.font(null, FontPosture.ITALIC, 11));</span>
+<span class="fc" id="L581">		vbox.getChildren().add(headerOne);</span>
+<span class="fc" id="L582">		vbox.getChildren().add(summary);</span>
+<span class="fc" id="L583">		VBox.setMargin(headerOne, new Insets(5, 0, 5, 0));</span>
+		
+		// For &quot;B. Hidden meaning behind your Horoscope&quot;
+<span class="fc" id="L586">		Text horoscopeExplanation = new Text(getHoroscopeExplanation());</span>
+<span class="fc" id="L587">		horoscopeExplanation.setWrappingWidth(550);</span>
+<span class="fc" id="L588">		vbox.getChildren().add(headerTwo);</span>
+<span class="fc" id="L589">		vbox.getChildren().add(horoscopeExplanation);</span>
+<span class="fc" id="L590">		VBox.setMargin(headerTwo, new Insets(5, 0, 5, 0));</span>
+		
+		// For &quot;C. Recommendation based on your Chinese Zodiac sign
+<span class="fc" id="L593">		Text chineseZodiacRecommendation = new Text(getChineseZodiacRecommendation());</span>
+<span class="fc" id="L594">		chineseZodiacRecommendation.setWrappingWidth(550);</span>
+<span class="fc" id="L595">		vbox.getChildren().add(headerThree);</span>
+<span class="fc" id="L596">		vbox.getChildren().add(chineseZodiacRecommendation);</span>
+<span class="fc" id="L597">		VBox.setMargin(headerThree, new Insets(5, 0, 5, 0));</span>
+		
+<span class="fc" id="L599">		Text remarks = new Text();</span>
+<span class="fc" id="L600">		String remarksDescription = &quot;The result is just for reference. Your Destiny is in Your Hands ;)&quot;;</span>
+<span class="fc" id="L601">		remarks.setText(remarksDescription);</span>
+<span class="fc" id="L602">		remarks.setFont(Font.font(null, FontPosture.ITALIC, 11));</span>
+<span class="fc" id="L603">		remarks.setWrappingWidth(550);</span>
+<span class="fc" id="L604">		vbox.getChildren().add(remarks);</span>
+<span class="fc" id="L605">		vbox.setMargin(remarks, new Insets(10, 5, 5, 0));</span>
+		
+		
+<span class="fc" id="L608">		Alert dialog = new Alert(Alert.AlertType.INFORMATION);</span>
+<span class="fc" id="L609">        dialog.setTitle(&quot;Detailed Algorithm&quot;);</span>
+<span class="fc" id="L610">        dialog.setHeaderText(header);</span>
+<span class="fc" id="L611">		ScrollPane scrollPane = new ScrollPane();</span>
+<span class="fc" id="L612">        scrollPane.setContent(vbox);</span>
+<span class="fc" id="L613">        dialog.getDialogPane().setContent(scrollPane);</span>
+<span class="fc" id="L614">        dialog.showAndWait();</span>
+<span class="fc" id="L615">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

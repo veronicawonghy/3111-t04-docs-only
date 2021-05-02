@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MostPopularNamesReport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PopNames3111</a> &gt; <a href="index.source.html" class="el_package">comp3111.popnames</a> &gt; <span class="el_source">MostPopularNamesReport.java</span></div><h1>MostPopularNamesReport.java</h1><pre class="source lang-java linenums">package comp3111.popnames;
+
+import java.util.List;
+import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.TableColumn;
+
+/**
+ * Class {@code MostPopularNamesReport} is the class for Task One Report.
+ *
+ * @author	Ceci Au
+ * @version	1.0
+ */
+public class MostPopularNamesReport {
+	
+	private int year;
+	private int numberOfNames;
+	
+	/**
+     * Constructs a new MostPopularNamesReport.
+     */
+<span class="fc" id="L28">	public MostPopularNamesReport(int year, int numberOfNames) {</span>
+<span class="fc" id="L29">		this.year = year;</span>
+<span class="fc" id="L30">		this.numberOfNames = numberOfNames;</span>
+<span class="fc" id="L31">	}</span>
+	
+	/**
+     * Returns a string of alert text. In general, the function 
+     * {@code checkInput} returns a empty string if the inputs are 
+     * valid, returns the corresponding alert text if the input(s) 
+     * is(are) invalid.
+     * &lt;p&gt;
+     * Two inputs are checked:
+     * &lt;ul&gt;
+     * &lt;li&gt;{@code year}: whether it is within 1880 to 2019.
+     * &lt;li&gt;{@code numberOfNames}: whether it is bigger than 0, and 
+     * smaller than the total birth in the year {@code year}.
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMostPopularNamesReport} in class {@code Controller}.
+     * &lt;p&gt;
+     * @return  a string of alert text.
+     */
+	public String checkInput() {
+<span class="fc" id="L52">		String alertText = &quot;&quot;;</span>
+    	// check year Validation
+<span class="fc bfc" id="L54" title="All 4 branches covered.">		if (year &lt; 1880 || year &gt; 2019) {</span>
+<span class="fc" id="L55">    		alertText += &quot;Please input number within 1880 and 2019 for Year!\n&quot;;</span>
+<span class="fc" id="L56">    		return alertText;</span>
+    	}
+    	// check numberOfNames Validation
+    	else {
+<span class="fc" id="L60">	    	int uniqueBoys = AnalyzeNames.getTotalNamesByGender(year, &quot;M&quot;);</span>
+<span class="fc" id="L61">	    	int uniqueGirls = AnalyzeNames.getTotalNamesByGender(year, &quot;F&quot;);</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">	    	int uniqueNames = (uniqueBoys &lt; uniqueGirls) ? uniqueBoys : uniqueGirls;</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">	    	if (numberOfNames &gt; uniqueNames) {</span>
+<span class="fc" id="L64">	    		alertText += String.format(&quot;In %d,\n&quot;, year);</span>
+<span class="fc" id="L65">	    		alertText += String.format(&quot;Unique Names (baby boys) = %,d\n&quot;, uniqueBoys);</span>
+<span class="fc" id="L66">	    		alertText += String.format(&quot;Unique Names (baby girls) = %,d\n&quot;, uniqueGirls);</span>
+<span class="fc" id="L67">	    		alertText += String.format(&quot;Please input number smaller than or equal to %,d for Number of Names!\n&quot;, uniqueNames);</span>
+<span class="fc" id="L68">	    		return alertText;</span>
+	    	}
+<span class="fc bfc" id="L70" title="All 2 branches covered.">	    	else if (numberOfNames &lt;= 0) {</span>
+<span class="fc" id="L71">	    		alertText += &quot;Please input number bigger than 0 for Number of Names!\n&quot;;</span>
+<span class="fc" id="L72">	    		return alertText;</span>
+	    	}
+    	}
+<span class="fc" id="L75">    	return alertText;</span>
+	}
+	
+	/**
+     * Returns a observable list containing {@code NameRecord} 
+     * to be reported. In general, the function {@code genNameRecordList} 
+     * returns a top N most popular names of {@code gender} to be 
+     * reported in the year of interest {@code year}, where the N 
+     * is data member {@code numberOfNames}.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMostPopularNamesReport} in class {@code Controller}.
+     * &lt;p&gt;
+     * @param	gender	the target gender of the observable list.
+     * @return  a observable list containing {@code NameRecord} to be 
+     * 			reported.
+     * @see		comp3111.popnames.NameRecord
+     */
+	public ObservableList&lt;NameRecord&gt; genNameRecordList(String gender){
+<span class="fc" id="L94">		String[] names = new String[numberOfNames];</span>
+<span class="fc" id="L95">		int[] numbers = new int[numberOfNames];</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">		for (int i=0; i&lt;numberOfNames; i++)</span>
+<span class="fc" id="L97">    		names[i] = AnalyzeNames.getName(year, i+1, gender);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">		for (int i=0; i&lt;numberOfNames; i++)</span>
+<span class="fc" id="L99">    		numbers[i] = AnalyzeNames.getOccurrence(year, names[i], gender);</span>
+<span class="fc" id="L100">		List&lt;NameRecord&gt; listData = new ArrayList&lt;NameRecord&gt;();</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		for (int i=0; i&lt;numberOfNames; i++)</span>
+<span class="fc" id="L102">			listData.add(new NameRecord(names[i], gender, numbers[i], year));</span>
+<span class="fc" id="L103">		ObservableList&lt;NameRecord&gt; olistData = FXCollections.observableArrayList(listData);</span>
+<span class="fc" id="L104">		return olistData;</span>
+	}
+
+	/**
+     * Returns a string of summary report. In general, the function 
+     * {@code genSummary} returns the summary of results of 
+     * {@code gender}.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMostPopularNamesReport} in class {@code Controller}.
+     * &lt;p&gt;
+     * @param	gender		the target gender of the summary.
+     * @param	olistData	the observable list containing 
+     * 						{@code NameRecord} to be reported.
+     * @return  a string of summary report.
+     * @see		comp3111.popnames.NameRecord
+     */
+	public String genSummary(String gender, ObservableList&lt;NameRecord&gt; olistData) {
+<span class="fc" id="L122">		String oReport = &quot;&quot;;</span>
+<span class="fc" id="L123">		String name = olistData.get(0).getName();</span>
+<span class="fc" id="L124">		int occurrence = olistData.get(0).getNumber();</span>
+<span class="fc" id="L125">		String percentage = olistData.get(0).getPercentage();</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">		String strGender = (gender == &quot;M&quot;) ? &quot;male&quot; : &quot;female&quot;;</span>
+<span class="fc" id="L127">		oReport += String.format(&quot;%s is the most popular name with the number of occurrences of %d,&quot;, name, occurrence);</span>
+<span class="fc" id="L128">		oReport += String.format(&quot; which represents %s of total %s births in %d.\n&quot;, percentage, strGender, year);</span>
+<span class="fc" id="L129">		return oReport;</span>
+	}
+	
+	/**
+     * Returns a string of description for data table, bar chart and 
+     * pie chart report of {@code gender}.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMostPopularNamesReport} in class {@code Controller}.
+     * &lt;p&gt;
+     * @param	gender		the target gender of the description.
+     * @return  a string of description.
+     */
+	public String genDesciption(String gender) {
+<span class="fc" id="L143">		String oReport = &quot;&quot;;</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">		String strGender = (gender == &quot;M&quot;) ? &quot;male&quot; : &quot;female&quot;;</span>
+<span class="fc" id="L145">		oReport += String.format(&quot;Top %d Names (%s) in %d\n[names with the reported numbers in tie are sorted and presented in alphabetical order]&quot;, numberOfNames, strGender, year);</span>
+<span class="fc" id="L146">		return oReport;</span>
+	}
+	
+	/**
+     * Updates values in the data table. In general, the function 
+     * {@code genDataTable} updates the {@code tab1Table} of 
+     * {@code gender} by the {@code olistData} to be reported.
+     * &lt;p&gt;
+     * There are three table columns:
+     * &lt;ul&gt;
+     * &lt;li&gt;Name: which refers to the data member {@code name} in 
+     * class {@code NameRecord}.
+     * &lt;li&gt;Occurrences: which refers to the data member {@code 
+     * number} in class {@code NameRecord}.
+     * &lt;li&gt;Percentage: which refers to the data member {@code 
+     * percentage} in class {@code NameRecord}.
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMostPopularNamesReport} in class {@code Controller}.
+     * &lt;p&gt;
+     * @param	gender		the target gender of the data table.
+     * @param	olistData	the observable list containing 
+     * 						{@code NameRecord} to be reported.
+     * @param	tab1Table	the data table to be updated.
+     * @see		comp3111.popnames.NameRecord
+     */
+	public void genDataTable(String gender, ObservableList&lt;NameRecord&gt; olistData, TableView&lt;NameRecord&gt; tab1Table) {
+<span class="fc" id="L174">		tab1Table.getItems().clear();</span>
+<span class="fc" id="L175">		tab1Table.getColumns().clear();</span>
+		
+<span class="fc" id="L177">		TableColumn&lt;NameRecord, String&gt; colName = new TableColumn&lt;NameRecord, String&gt;(&quot;Name&quot;);</span>
+<span class="fc" id="L178">        colName.setCellValueFactory(new PropertyValueFactory&lt;NameRecord, String&gt;(&quot;name&quot;));</span>
+<span class="fc" id="L179">        TableColumn&lt;NameRecord, Integer&gt; colOccurrences = new TableColumn&lt;NameRecord, Integer&gt;(&quot;Occurrences&quot;);</span>
+<span class="fc" id="L180">        colOccurrences.setCellValueFactory(new PropertyValueFactory&lt;NameRecord, Integer&gt;(&quot;number&quot;));</span>
+<span class="fc" id="L181">        TableColumn&lt;NameRecord, String&gt; colPercentage = new TableColumn&lt;NameRecord, String&gt;(&quot;Percentage&quot;);</span>
+<span class="fc" id="L182">        colPercentage.setCellValueFactory(new PropertyValueFactory&lt;NameRecord, String&gt;(&quot;percentage&quot;));</span>
+<span class="fc" id="L183">        tab1Table.setItems(olistData);</span>
+<span class="fc" id="L184">        tab1Table.getColumns().addAll(colName, colOccurrences, colPercentage);</span>
+<span class="fc" id="L185">	}</span>
+
+	/**
+     * Updates values in the bar chart. In general, the function 
+     * {@code genBarChart} updates the {@code tab1Bar} of 
+     * {@code gender} by the {@code olistData} to be reported.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMostPopularNamesReport} in class {@code Controller}.
+     * &lt;p&gt;
+     * @param	gender		the target gender of the data table.
+     * @param	olistData	the observable list containing 
+     * 						{@code NameRecord} to be reported.
+     * @param	tab1Bar		the bar chart to be updated.
+     * @see		comp3111.popnames.NameRecord
+     */
+	public void genBarChart(String gender, ObservableList&lt;NameRecord&gt; olistData, BarChart&lt;String,Integer&gt; tab1Bar) {
+<span class="fc" id="L202">		tab1Bar.getData().clear();</span>
+		
+<span class="fc" id="L204">		XYChart.Series&lt;String,Integer&gt; seriesBar = new XYChart.Series&lt;String,Integer&gt;();</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">		for (int i=0; i&lt;numberOfNames; i++) </span>
+<span class="fc" id="L206">			seriesBar.getData().add(new XYChart.Data&lt;String,Integer&gt;(olistData.get(i).getName(),olistData.get(i).getNumber()));</span>
+<span class="fc" id="L207">		tab1Bar.getData().add(seriesBar);</span>
+<span class="fc" id="L208">	}</span>
+
+	/**
+     * Updates values in the pie chart. In general, the function 
+     * {@code genPieChart} updates the {@code tab1Pie} of 
+     * {@code gender} by the {@code olistData} to be reported.
+     * &lt;p&gt;
+     * The function will be called by the function {@code 
+     * doMostPopularNamesReport} in class {@code Controller}.
+     * &lt;p&gt;
+     * @param	gender		the target gender of the data table.
+     * @param	olistData	the observable list containing 
+     * 						{@code NameRecord} to be reported.
+     * @param	tab1Pie		the pie chart to be updated.
+     * @see		comp3111.popnames.NameRecord
+     */
+	public void genPieChart(String gender, ObservableList&lt;NameRecord&gt; olistData, PieChart tab1Pie) {
+<span class="fc" id="L225">		tab1Pie.getData().clear();</span>
+		
+<span class="fc" id="L227">		String[] names = new String[numberOfNames];</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">		for (int i=0; i&lt;numberOfNames; i++)</span>
+<span class="fc" id="L229">    		names[i] = AnalyzeNames.getName(year, i+1, gender);</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">		for (int i=0; i&lt;numberOfNames; i++)</span>
+<span class="fc" id="L231">			tab1Pie.getData().add(new PieChart.Data(names[i], AnalyzeNames.getOccurrence(year, names[i], gender)));</span>
+<span class="fc" id="L232">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
