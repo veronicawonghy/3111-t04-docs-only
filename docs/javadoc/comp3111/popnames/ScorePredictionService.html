@@ -265,14 +265,19 @@ java.lang.String&nbsp;mateName,
 <td class="col-first"><code>java.lang.String</code></td>
 <th class="col-second" scope="row"><code><span class="member-name-link"><a href="#getSimpleResult()">getSimpleResult</a></span>()</code></th>
 <td class="col-last">
-<div class="block">Get the summary of result of simple algorithm</div>
+<div class="block">Get the summary of result of simple algorithm.</div>
 </td>
 </tr>
 <tr class="row-color" id="i7">
 <td class="col-first"><code>static java.lang.String</code></td>
 <th class="col-second" scope="row"><code><span class="member-name-link"><a href="#isValidName(java.lang.String)">isValidName</a></span>&#8203;(java.lang.String&nbsp;name)</code></th>
 <td class="col-last">
-<div class="block">Check if the parameter name is a valid name</div>
+<div class="block">Check if the parameter name is a valid name:
+ 
+ It should not be empty
+ It should be within 2-15 characters
+ No special character / number allowed (eg.$%^*# / 0-9)
+ </div>
 </td>
 </tr>
 </tbody>
@@ -356,7 +361,12 @@ java.lang.String&nbsp;mateName,
 <section class="detail" id="isValidName(java.lang.String)">
 <h3>isValidName</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">java.lang.String</span>&nbsp;<span class="member-name">isValidName</span>&#8203;(<span class="parameters">java.lang.String&nbsp;name)</span></div>
-<div class="block">Check if the parameter name is a valid name</div>
+<div class="block">Check if the parameter name is a valid name:
+ <ul>
+ <li>It should not be empty</li>
+ <li>It should be within 2-15 characters</li>
+ <li>No special character / number allowed (eg.$%^*# / 0-9)</li>
+ </ul></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>name</code> - Any name</dd>
@@ -383,7 +393,11 @@ java.lang.String&nbsp;mateName,
 <section class="detail" id="getSimpleResult()">
 <h3>getSimpleResult</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">java.lang.String</span>&nbsp;<span class="member-name">getSimpleResult</span>()</div>
-<div class="block">Get the summary of result of simple algorithm</div>
+<div class="block">Get the summary of result of simple algorithm. If the score is
+ <ul>
+ <li> 0: the name is not very compatible </li>
+ <li> 100: highly compatible </li>
+ </ul></div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>Summary of result of simple algorithm in string</dd>
@@ -397,6 +411,8 @@ java.lang.String&nbsp;mateName,
 <div class="block">Get the summary of result of simple algorithm
  <p>
  The calculation is referenced from <a href="https://en.wikipedia.org/wiki/Numerology#Pythagorean_system">https://en.wikipedia.org/wiki/Numerology#Pythagorean_system</a>
+ <br>
+ More explanation in supplementary notes.
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -413,7 +429,9 @@ java.lang.String&nbsp;mateName,
 <div class="block">Get the summary of detailed compatibility 
  <p>
  The detailed algorithm is composed of two parts - numerology and astrology.
+ <br>
  If horoscope of the person to be matched is not sure, the score will be calculated purely by life path number compatibility.
+ <br>
  Otherwise, the score will be calculated by 60% of horoscope compatibility and 40% of life path number compatibility.
  </p></div>
 <dl class="notes">
@@ -467,7 +485,14 @@ java.lang.String&nbsp;mateName,
 <section class="detail" id="getDetailedReport()">
 <h3>getDetailedReport</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="member-name">getDetailedReport</span>()</div>
-<div class="block">Generate a full report showing the detailed compatibility. A dialog will pop up.</div>
+<div class="block">Generate a full report showing the detailed compatibility. A dialog will pop up.<br>
+ The report includes the following:
+ <ul>
+ <li>Image according to the gender of the match </li>
+ <li>Compatibility score</li>
+ <li>Hidden meaning behind your horoscope</li>
+ <li>Recommendation based on your Chinese zodiac</li>
+ </ul></div>
 </section>
 </li>
 </ul>

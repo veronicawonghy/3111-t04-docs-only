@@ -219,7 +219,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Get the summary of horoscope explanation</div>
 </dd>
 <dt><span class="member-name-link"><a href="comp3111/popnames/AnalyzeNames.html#getKthOccurrence(java.lang.String,int,int,int)">getKthOccurrence(String, int, int, int)</a></span> - Static method in class comp3111.popnames.<a href="comp3111/popnames/AnalyzeNames.html" title="class in comp3111.popnames">AnalyzeNames</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns a list containing relevant statistics of the Kth popular names
+ according to the specified input.</div>
+</dd>
 <dt><span class="member-name-link"><a href="comp3111/popnames/KthPopularNamesReport.html#getKthPopularNamesList()">getKthPopularNamesList()</a></span> - Method in class comp3111.popnames.<a href="comp3111/popnames/KthPopularNamesReport.html" title="class in comp3111.popnames">KthPopularNamesReport</a></dt>
 <dd>
 <div class="block">Accessor of the <code>KthPopularNamesList</code>.</div>
@@ -306,7 +309,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><span class="member-name-link"><a href="comp3111/popnames/ScorePredictionService.html#getSimpleResult()">getSimpleResult()</a></span> - Method in class comp3111.popnames.<a href="comp3111/popnames/ScorePredictionService.html" title="class in comp3111.popnames">ScorePredictionService</a></dt>
 <dd>
-<div class="block">Get the summary of result of simple algorithm</div>
+<div class="block">Get the summary of result of simple algorithm.</div>
 </dd>
 <dt><span class="member-name-link"><a href="comp3111/popnames/KthPopularNamesReport.html#getSummary()">getSummary()</a></span> - Method in class comp3111.popnames.<a href="comp3111/popnames/KthPopularNamesReport.html" title="class in comp3111.popnames">KthPopularNamesReport</a></dt>
 <dd>
@@ -333,7 +336,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Get the total birth of the gender of interest in a particular year</div>
 </dd>
 <dt><span class="member-name-link"><a href="comp3111/popnames/AnalyzeNames.html#getTotalNamesByGender(int,java.lang.String)">getTotalNamesByGender(int, String)</a></span> - Static method in class comp3111.popnames.<a href="comp3111/popnames/AnalyzeNames.html" title="class in comp3111.popnames">AnalyzeNames</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Get the total names of the gender of interest in a particular year</div>
+</dd>
 <dt><span class="member-name-link"><a href="comp3111/popnames/KthPopularNamesReport.html#getTotalOccurrence()">getTotalOccurrence()</a></span> - Method in class comp3111.popnames.<a href="comp3111/popnames/KthPopularNamesReport.html" title="class in comp3111.popnames">KthPopularNamesReport</a></dt>
 <dd>
 <div class="block">Returns the total occurrence in the KthPopularNamesList.</div>
@@ -364,15 +369,31 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><span class="member-name-link"><a href="comp3111/popnames/PopularityOfNamesReport.html#isValidName(java.lang.String)">isValidName(String)</a></span> - Static method in class comp3111.popnames.<a href="comp3111/popnames/PopularityOfNamesReport.html" title="class in comp3111.popnames">PopularityOfNamesReport</a></dt>
 <dd>
-<div class="block">Check if the parameter name is a valid name</div>
+<div class="block">Check if the parameter name is a valid name:
+ 
+ It should not be empty
+ It should be within 2-15 characters
+ No special character / number allowed (eg.$%^*# / 0-9)
+ </div>
 </dd>
 <dt><span class="member-name-link"><a href="comp3111/popnames/ScorePredictionService.html#isValidName(java.lang.String)">isValidName(String)</a></span> - Static method in class comp3111.popnames.<a href="comp3111/popnames/ScorePredictionService.html" title="class in comp3111.popnames">ScorePredictionService</a></dt>
 <dd>
-<div class="block">Check if the parameter name is a valid name</div>
+<div class="block">Check if the parameter name is a valid name:
+ 
+ It should not be empty
+ It should be within 2-15 characters
+ No special character / number allowed (eg.$%^*# / 0-9)
+ </div>
 </dd>
 <dt><span class="member-name-link"><a href="comp3111/popnames/PopularityOfNamesReport.html#isValidYearPeriod(java.lang.String,java.lang.String)">isValidYearPeriod(String, String)</a></span> - Static method in class comp3111.popnames.<a href="comp3111/popnames/PopularityOfNamesReport.html" title="class in comp3111.popnames">PopularityOfNamesReport</a></dt>
 <dd>
-<div class="block">Check if the year period of interest is a valid year period</div>
+<div class="block">Check if the year period of interest is a valid year period
+ 
+ The startYear and endYear should not be empty
+ The startYear and endYear should be number only
+ The startYear should be smaller than endYear
+ The startYear and endYear should be within 1880-2019
+ </div>
 </dd>
 </dl>
 <h2 class="title" id="I:K">K</h2>

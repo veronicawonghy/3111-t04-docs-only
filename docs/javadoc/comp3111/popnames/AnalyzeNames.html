@@ -137,7 +137,10 @@ extends java.lang.Object</pre>
 int&nbsp;rankOfNames,
 int&nbsp;startingYear,
 int&nbsp;endingYear)</code></th>
-<td class="col-last">&nbsp;</td>
+<td class="col-last">
+<div class="block">Returns a list containing relevant statistics of the Kth popular names
+ according to the specified input.</div>
+</td>
 </tr>
 <tr class="alt-color" id="i2">
 <td class="col-first"><code>static java.lang.String</code></td>
@@ -185,7 +188,9 @@ java.lang.String&nbsp;gender)</code></th>
 <td class="col-first"><code>static int</code></td>
 <th class="col-second" scope="row"><code><span class="member-name-link"><a href="#getTotalNamesByGender(int,java.lang.String)">getTotalNamesByGender</a></span>&#8203;(int&nbsp;year,
 java.lang.String&nbsp;gender)</code></th>
-<td class="col-last">&nbsp;</td>
+<td class="col-last">
+<div class="block">Get the total names of the gender of interest in a particular year</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -301,6 +306,14 @@ java.lang.String&nbsp;gender)</span></div>
 <h3>getTotalNamesByGender</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="member-name">getTotalNamesByGender</span>&#8203;(<span class="parameters">int&nbsp;year,
 java.lang.String&nbsp;gender)</span></div>
+<div class="block">Get the total names of the gender of interest in a particular year</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>year</code> - The year of interest</dd>
+<dd><code>gender</code> - The gender of interest</dd>
+<dt>Returns:</dt>
+<dd>Total names of the gender of interest in the according year</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -325,6 +338,22 @@ java.lang.String&nbsp;gender)</span></div>
 int&nbsp;rankOfNames,
 int&nbsp;startingYear,
 int&nbsp;endingYear)</span></div>
+<div class="block">Returns a list containing relevant statistics of the Kth popular names
+ according to the specified input.
+ <p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>gender</code> - the target gender.</dd>
+<dd><code>rankOfNames</code> - the rank of name to be queried</dd>
+<dd><code>startingYear</code> - the starting year of the year range</dd>
+<dd><code>endingYear</code> - the ending year of the year range
+ <p>
+ The function will be called by the function <code>generateKthPopularNamesList</code> 
+ in class <code>KthPopularNamesReport</code>.
+ <p></dd>
+<dt>Returns:</dt>
+<dd>relevant statistics of the Kth popular names, of <code>List&lt;KthPopularNamesReport.KthPopularNames&gt;</code> type.</dd>
+</dl>
 </section>
 </li>
 </ul>

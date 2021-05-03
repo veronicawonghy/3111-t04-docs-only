@@ -209,7 +209,12 @@ int&nbsp;endingYear)</code></th>
 <td class="col-first"><code>static java.lang.String</code></td>
 <th class="col-second" scope="row"><code><span class="member-name-link"><a href="#isValidName(java.lang.String)">isValidName</a></span>&#8203;(java.lang.String&nbsp;name)</code></th>
 <td class="col-last">
-<div class="block">Check if the parameter name is a valid name</div>
+<div class="block">Check if the parameter name is a valid name:
+ 
+ It should not be empty
+ It should be within 2-15 characters
+ No special character / number allowed (eg.$%^*# / 0-9)
+ </div>
 </td>
 </tr>
 <tr class="row-color" id="i7">
@@ -217,7 +222,13 @@ int&nbsp;endingYear)</code></th>
 <th class="col-second" scope="row"><code><span class="member-name-link"><a href="#isValidYearPeriod(java.lang.String,java.lang.String)">isValidYearPeriod</a></span>&#8203;(java.lang.String&nbsp;startYear,
 java.lang.String&nbsp;endYear)</code></th>
 <td class="col-last">
-<div class="block">Check if the year period of interest is a valid year period</div>
+<div class="block">Check if the year period of interest is a valid year period
+ 
+ The startYear and endYear should not be empty
+ The startYear and endYear should be number only
+ The startYear should be smaller than endYear
+ The startYear and endYear should be within 1880-2019
+ </div>
 </td>
 </tr>
 </tbody>
@@ -267,7 +278,12 @@ int&nbsp;endingYear)</span></div>
 <section class="detail" id="isValidName(java.lang.String)">
 <h3>isValidName</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">java.lang.String</span>&nbsp;<span class="member-name">isValidName</span>&#8203;(<span class="parameters">java.lang.String&nbsp;name)</span></div>
-<div class="block">Check if the parameter name is a valid name</div>
+<div class="block">Check if the parameter name is a valid name:
+ <ul>
+ <li>It should not be empty</li>
+ <li>It should be within 2-15 characters</li>
+ <li>No special character / number allowed (eg.$%^*# / 0-9)</li>
+ </ul></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>name</code> - Name of interest</dd>
@@ -281,7 +297,13 @@ int&nbsp;endingYear)</span></div>
 <h3>isValidYearPeriod</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">java.lang.String</span>&nbsp;<span class="member-name">isValidYearPeriod</span>&#8203;(<span class="parameters">java.lang.String&nbsp;startYear,
 java.lang.String&nbsp;endYear)</span></div>
-<div class="block">Check if the year period of interest is a valid year period</div>
+<div class="block">Check if the year period of interest is a valid year period
+ <ul>
+ <li>The startYear and endYear should not be empty</li>
+ <li>The startYear and endYear should be number only</li>
+ <li>The startYear should be smaller than endYear</li>
+ <li>The startYear and endYear should be within 1880-2019</li>
+ </ul></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>startYear</code> - Starting year of interest</dd>
@@ -313,7 +335,14 @@ java.lang.String&nbsp;endYear)</span></div>
 <section class="detail" id="getFullReport()">
 <h3>getFullReport</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="member-name">getFullReport</span>()</div>
-<div class="block">Generate a full report showing the popularity of name of interest. A dialog will pop up.</div>
+<div class="block">Generate a full report showing the popularity of name of interest. A dialog will pop up. <br>
+ The report includes the following:
+ <ul>
+ <li>Summary of Results </li>
+ <li>Relevant results presented with a data table</li>
+ <li>Relevant results presented with a bar chart</li>
+ <li>Relevant results presented with a line chart</li>
+ </ul></div>
 </section>
 </li>
 <li>
